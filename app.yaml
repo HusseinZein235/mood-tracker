@@ -1,0 +1,19 @@
+runtime: php
+env: flex
+
+runtime_config:
+  document_root: .
+  
+env_variables:
+  MONGODB_URI: "mongodb+srv://<username>:<password>@<cluster-address>/moodmate?retryWrites=true&w=majority"
+  
+handlers:
+- url: /(.*\.(gif|png|jpg|css|js|ico))$
+  static_files: \1
+  upload: .*\.(gif|png|jpg|css|js|ico)$
+
+- url: /.*
+  script: auto
+
+beta_settings:
+  cloud_sql_instances: "YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME" 

@@ -1,0 +1,2262 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>السعادة النفسية - تتبع مشاعرك</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Arabic font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f7fafc;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .section-fade {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .mood-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .mood-btn {
+            transition: all 0.3s ease;
+        }
+        
+        /* Form validation styles */
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .input-error {
+            border: 1px solid #e74c3c !important;
+            background-color: rgba(231, 76, 60, 0.05);
+        }
+        
+        .message {
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        .message.success {
+            background-color: rgba(46, 204, 113, 0.1);
+            border: 1px solid #2ecc71;
+            color: #27ae60;
+        }
+        
+        .message.error {
+            background-color: rgba(231, 76, 60, 0.1);
+            border: 1px solid #e74c3c;
+            color: #c0392b;
+        }
+        
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+        
+        .form-group button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        /* Loading indicator */
+        .loading-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Section transitions */
+        .section-fade {
+            animation: fadeIn 0.5s ease-in-out;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .section-slide-in {
+            animation: slideIn 0.4s ease-in-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Active navigation button */
+        .nav-active {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: rgb(37, 99, 235);
+            font-weight: 500;
+        }
+        
+        /* Button pulse animation */
+        .btn-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .toast.error {
+            background-color: #e74c3c;
+        }
+        
+        .toast.warning {
+            background-color: #f39c12;
+        }
+    </style>
+    <link rel="stylesheet" href="css/enhanced-style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav id="navbar" class="navbar bg-white shadow-md py-3 px-4 md:px-8 hidden">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-blue-600">السعادة النفسية</a>
+            <div class="space-x-1 space-x-reverse">
+                <button id="home-btn" class="px-4 py-2 rounded hover:bg-blue-100 transition-colors">الرئيسية</button>
+                <button id="mood-record-btn" class="px-4 py-2 rounded hover:bg-blue-100 transition-colors">تسجيل مشاعر</button>
+                <button id="history-btn" class="px-4 py-2 rounded hover:bg-blue-100 transition-colors">سجل المشاعر</button>
+                <button id="chat-btn" class="px-4 py-2 rounded hover:bg-blue-100 transition-colors">المحادثة</button>
+                <button id="admin-dashboard-btn" class="px-4 py-2 rounded hover:bg-blue-100 transition-colors hidden">لوحة التحكم</button>
+                <button id="logout-btn" class="px-4 py-2 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors">تسجيل الخروج</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Add this div somewhere in the main container, maybe in the header or navbar area -->
+    <div id="session-status" class="hidden"></div>
+
+    <!-- Welcome Section -->
+    <div id="welcome-section" class="min-h-screen flex flex-col items-center justify-center">
+        <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full mx-4">
+            <div class="text-center mb-6">
+                <i class="fas fa-brain text-5xl text-blue-600 mb-4"></i>
+                <h1 class="text-3xl font-bold text-blue-600 mb-2">السعادة النفسية</h1>
+                <p class="text-gray-600">
+                    مرحبًا بك في رحلة اكتشاف المشاعر والصحة النفسية
+                </p>
+            </div>
+            
+            <!-- Login/Register Tabs -->
+            <div class="mb-6">
+                <div class="flex border-b">
+                    <button id="login-tab" class="py-2 px-4 w-1/2 font-medium border-b-2 border-blue-600 text-blue-600">تسجيل الدخول</button>
+                    <button id="register-tab" class="py-2 px-4 w-1/2 font-medium text-gray-500">إنشاء حساب</button>
+                </div>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="login-form" class="form-container">
+              <h2>تسجيل الدخول</h2>
+              <form id="loginForm">
+                <div class="form-group">
+                  <label for="username">اسم المستخدم</label>
+                  <input type="text" id="login-username" name="username" required>
+                  <p class="error-message" id="login-username-error" style="display: none; color: red;"></p>
+                </div>
+                <div class="form-group">
+                  <label for="password">كلمة المرور</label>
+                  <input type="password" id="login-password" name="password" required>
+                  <p class="error-message" id="login-password-error" style="display: none; color: red;"></p>
+                </div>
+                <div class="form-group">
+                  <button type="submit" id="login-submit">تسجيل الدخول</button>
+                  <p id="login-message" class="message" style="display: none;"></p>
+                </div>
+              </form>
+              <p>ليس لديك حساب؟ <a href="#" id="show-register">إنشاء حساب جديد</a></p>
+            </div>
+            
+            <!-- Register Form -->
+            <div id="register-form" class="form-container" style="display: none;">
+              <h2>إنشاء حساب جديد</h2>
+              <form id="registerForm">
+                <div class="form-group">
+                  <label for="username">اسم المستخدم</label>
+                  <input type="text" id="register-username" name="username" required>
+                  <p class="error-message" id="register-username-error" style="display: none; color: red;"></p>
+                </div>
+                <div class="form-group">
+                  <label for="name">الاسم الكامل</label>
+                  <input type="text" id="register-name" name="name" required>
+                  <p class="error-message" id="register-name-error" style="display: none; color: red;"></p>
+                </div>
+                <div class="form-group">
+                  <label for="password">كلمة المرور</label>
+                  <input type="password" id="register-password" name="password" required>
+                  <p class="error-message" id="register-password-error" style="display: none; color: red;"></p>
+                </div>
+                <div class="form-group">
+                  <label for="email">البريد الإلكتروني</label>
+                  <input type="email" id="register-email" name="email" required>
+                  <p class="error-message" id="register-email-error" style="display: none; color: red;"></p>
+                </div>
+                <div class="form-group">
+                  <button type="submit" id="register-submit">إنشاء حساب</button>
+                  <p id="register-message" class="message" style="display: none;"></p>
+                </div>
+              </form>
+              <p>لديك حساب بالفعل؟ <a href="#" id="show-login">تسجيل الدخول</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Home Section (New) -->
+    <div id="home-section" class="min-h-screen hidden flex flex-col pt-20 pb-10 px-4">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-blue-600 mb-4 text-center">مرحبًا بك، <span id="user-name-display"></span></h2>
+            <div class="text-center mt-4 mb-8">
+                <a href="user_statistics.php" class="bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-2 px-6 rounded-lg inline-flex items-center">
+                    <i class="fas fa-chart-pie mr-2"></i>
+                    عرض إحصائيات المشاعر
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                    <div class="text-center mb-4">
+                        <div class="text-5xl mb-4">😌</div>
+                        <h3 class="text-xl font-bold text-blue-600">تمارين التنفس</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">تخلص من التوتر وحسّن تركيزك مع تمارين التنفس البسيطة</p>
+                    <button onclick="showSection('breathing-content-section')" class="w-full py-2 px-4 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
+                        ابدأ الآن
+            </button>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                    <div class="text-center mb-4">
+                        <div class="text-5xl mb-4">🎯</div>
+                        <h3 class="text-xl font-bold text-blue-600">تقنية بومودورو</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">حسّن إنتاجيتك وتركيزك باستخدام تقنية الوقت المحدد للعمل والراحة</p>
+                    <button onclick="showSection('pomodoro-content-section')" class="w-full py-2 px-4 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
+                        ابدأ الآن
+                    </button>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                    <div class="text-center mb-4">
+                        <div class="text-5xl mb-4">📋</div>
+                        <h3 class="text-xl font-bold text-blue-600">خطة عمل</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">نظّم يومك وضع خطة للمهام التي ترغب في إنجازها</p>
+                    <button onclick="showSection('plan-content-section')" class="w-full py-2 px-4 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
+                        ابدأ الآن
+                    </button>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                    <div class="text-center mb-4">
+                        <div class="text-5xl mb-4">🧘</div>
+                        <h3 class="text-xl font-bold text-blue-600">فيديو استرخاء</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">شاهد فيديو استرخاء يساعدك على الهدوء وتحسين المزاج</p>
+                    <button onclick="showSection('relax-content-section')" class="w-full py-2 px-4 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
+                        ابدأ الآن
+                    </button>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button onclick="showSection('mood-section')" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    تسجيل مشاعري اليوم
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mood Selection Section -->
+    <div id="mood-section" class="min-h-screen hidden flex flex-col items-center justify-center section-fade relative">
+        <button onclick="goToSection('home-section')" class="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow transition">
+                    <i class="fas fa-arrow-right ml-2"></i>العودة
+                </button>
+        <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full mx-4">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-blue-600 mb-2">كيف تشعر اليوم؟</h2>
+                <p class="text-gray-600">اختر ما يعبر عن حالتك المزاجية العامة</p>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <button onclick="selectMood('happy')" class="mood-btn p-6 bg-gradient-to-b from-yellow-50 to-yellow-100 rounded-xl hover:shadow-xl transition-all flex flex-col items-center">
+                    <div class="text-4xl mb-2">😊</div>
+                    <div class="text-lg font-medium">سعيد</div>
+                </button>
+                <button onclick="selectMood('normal')" class="mood-btn p-6 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl hover:shadow-xl transition-all flex flex-col items-center">
+                    <div class="text-4xl mb-2">😐</div>
+                    <div class="text-lg font-medium">طبيعي</div>
+                </button>
+                <button onclick="selectMood('unhappy')" class="mood-btn p-6 bg-gradient-to-b from-blue-50 to-blue-100 rounded-xl hover:shadow-xl transition-all flex flex-col items-center">
+                    <div class="text-4xl mb-2">😔</div>
+                    <div class="text-lg font-medium">حزين</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Specific Mood Section -->
+    <div id="specific-mood-section" class="min-h-screen hidden flex flex-col items-center justify-center section-fade">
+        <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full mx-4">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-blue-600 mb-2">ما هي مشاعرك تحديدًا؟</h2>
+                <p class="text-gray-600">اختر الوصف الذي يناسب حالتك النفسية</p>
+            </div>
+            <div id="specific-mood-options" class="grid grid-cols-2 gap-4">
+                <!-- Options will be populated by JavaScript -->
+            </div>
+            <div class="mt-4 text-center">
+                <button onclick="goBack('mood-section')" class="mt-4 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                    <i class="fas fa-arrow-right ml-1"></i> العودة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reason Section -->
+    <div id="reason-section" class="min-h-screen hidden flex flex-col items-center justify-center section-fade">
+        <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full mx-4">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-blue-600 mb-2">ما سبب شعورك الحالي؟</h2>
+                <p class="text-gray-600">اختر السبب الأقرب لحالتك النفسية</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="selectReason('school')" class="mood-btn p-4 bg-gradient-to-b from-purple-50 to-purple-100 rounded-xl hover:shadow-xl transition-all flex flex-col items-center">
+                    <div class="text-3xl mb-2">🏫</div>
+                    <div class="font-medium">المدرسة/الجامعة</div>
+                </button>
+                <button onclick="selectReason('family')" class="mood-btn p-4 bg-gradient-to-b from-red-50 to-red-100 rounded-xl hover:shadow-xl transition-all flex flex-col items-center">
+                    <div class="text-3xl mb-2">👪</div>
+                    <div class="font-medium">العائلة</div>
+                </button>
+                <button onclick="selectReason('friends')" class="mood-btn p-4 bg-gradient-to-b from-green-50 to-green-100 rounded-xl hover:shadow-xl transition-all flex flex-col items-center">
+                    <div class="text-3xl mb-2">👥</div>
+                    <div class="font-medium">الأصدقاء</div>
+                </button>
+                <button onclick="selectReason('health')" class="mood-btn p-4 bg-gradient-to-b from-blue-50 to-blue-100 rounded-xl hover:shadow-xl transition-all flex flex-col items-center">
+                    <div class="text-3xl mb-2">💪</div>
+                    <div class="font-medium">الصحة</div>
+                </button>
+            </div>
+            <div class="mt-4 text-center">
+                <button onclick="goBack('specific-mood-section')" class="mt-4 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                    <i class="fas fa-arrow-right ml-1"></i> العودة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Section -->
+    <div id="activity-section" class="min-h-screen hidden flex flex-col items-center justify-center section-fade">
+        <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full mx-4">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-blue-600 mb-2">نحن هنا لمساعدتك!</h2>
+                <p class="text-gray-600" id="activity-description">اختر النشاط الذي ترغب بالقيام به لتحسين حالتك المزاجية</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="selectActivity('breathing')" class="mood-btn p-4 bg-gradient-to-b from-blue-50 to-blue-100 rounded-xl hover:shadow-xl transition-all flex flex-col items-center primary-action">
+                    <div class="text-3xl mb-2">🧘</div>
+                    <div class="font-medium">تمارين التنفس</div>
+                </button>
+                <button onclick="selectActivity('relax')" class="mood-btn p-4 bg-gradient-to-b from-green-50 to-green-100 rounded-xl hover:shadow-xl transition-all flex flex-col items-center primary-action">
+                    <div class="text-3xl mb-2">🎵</div>
+                    <div class="font-medium">فيديو استرخاء</div>
+                </button>
+                <button onclick="selectActivity('pomodoro')" class="mood-btn p-4 bg-gradient-to-b from-yellow-50 to-yellow-100 rounded-xl hover:shadow-xl transition-all flex flex-col items-center primary-action">
+                    <div class="text-3xl mb-2">⏰</div>
+                    <div class="font-medium">تقنية بومودورو</div>
+                </button>
+                <button onclick="selectActivity('plan')" class="mood-btn p-4 bg-gradient-to-b from-purple-50 to-purple-100 rounded-xl hover:shadow-xl transition-all flex flex-col items-center primary-action">
+                    <div class="text-3xl mb-2">📝</div>
+                    <div class="font-medium">وضع خطة</div>
+                </button>
+            </div>
+            <div class="mt-4 text-center">
+                <button onclick="goBack('reason-section')" class="mt-4 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                    <i class="fas fa-arrow-right ml-1"></i> العودة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Section -->
+    <div id="history-section" class="min-h-screen hidden py-12 section-fade">
+        <div class="container mx-auto px-4">
+            <div class="bg-white p-6 rounded-xl shadow-lg max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold text-blue-600 mb-6 text-center">سجل مشاعرك</h2>
+                <div id="history-content" class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="p-3 text-right">التاريخ</th>
+                                <th class="p-3 text-right">المشاعر</th>
+                                <th class="p-3 text-right">المشاعر التفصيلية</th>
+                                <th class="p-3 text-right">السبب</th>
+                                <th class="p-3 text-right">النشاط</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="no-history-message" class="text-center py-8 text-gray-500 hidden">
+                    لا يوجد سجل للمشاعر بعد.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Section -->
+    <div id="chat-section" class="min-h-screen hidden py-12 section-fade">
+        <div class="container mx-auto px-4">
+            <div class="bg-white p-6 rounded-xl shadow-lg max-w-2xl mx-auto h-[80vh] flex flex-col">
+                <h2 class="text-2xl font-bold text-blue-600 mb-6 text-center">المساعد الذكي</h2>
+                <div id="chat-messages" class="flex-1 overflow-y-auto mb-4 p-4 bg-gray-50 rounded-lg">
+                    <div class="chat-message bot">
+                        <div class="flex items-end">
+                            <div class="flex flex-col space-y-2 text-sm max-w-xs mx-2 order-2">
+                                <div><span class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-blue-100 text-gray-800">مرحبًا! أنا هنا للمساعدة في تحسين حالتك النفسية. كيف يمكنني مساعدتك اليوم؟</span></div>
+                            </div>
+                            <img src="https://ui-avatars.com/api/?name=AI&background=2563eb&color=fff" alt="AI" class="w-8 h-8 rounded-full order-1">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <input type="text" id="chat-input" placeholder="اكتب رسالتك هنا..." class="flex-1 border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button id="send-chat-btn" class="bg-blue-600 text-white p-2 rounded-lg mr-2 hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard Section -->
+    <div id="admin-dashboard-section" class="min-h-screen hidden py-12 section-fade">
+        <div class="container mx-auto px-4">
+            <div class="bg-white p-6 rounded-xl shadow-lg max-w-6xl mx-auto">
+                <h2 class="text-2xl font-bold text-blue-600 mb-6 text-center">لوحة التحكم الإدارية</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-blue-50 p-4 rounded-lg shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="text-lg font-semibold text-blue-800">إجمالي المستخدمين</h3>
+                                <p id="total-users" class="text-3xl font-bold text-blue-600">-</p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-users text-2xl text-blue-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="text-lg font-semibold text-green-800">إجمالي السجلات</h3>
+                                <p id="total-records" class="text-3xl font-bold text-green-600">-</p>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i class="fas fa-chart-line text-2xl text-green-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-purple-50 p-4 rounded-lg shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="text-lg font-semibold text-purple-800">متوسط السعادة</h3>
+                                <p id="avg-happiness" class="text-3xl font-bold text-purple-600">-</p>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-full">
+                                <i class="fas fa-smile text-2xl text-purple-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white p-4 rounded-lg shadow border">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">توزيع المشاعر</h3>
+                        <div class="h-64 flex items-center justify-center" id="mood-chart-container">
+                            <canvas id="mood-chart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow border">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">توزيع الأنشطة</h3>
+                        <div class="h-64 flex items-center justify-center" id="activity-chart-container">
+                            <canvas id="activity-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-4 rounded-lg shadow border mb-8">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">اتجاهات السعادة مع الوقت</h3>
+                    <div class="h-80 flex items-center justify-center" id="mood-trend-chart-container">
+                        <canvas id="mood-trend-chart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-4 rounded-lg shadow border mb-8">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">أحدث المستخدمين</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="p-3 text-right">الاسم</th>
+                                    <th class="p-3 text-right">اسم المستخدم</th>
+                                    <th class="p-3 text-right">البريد الإلكتروني</th>
+                                    <th class="p-3 text-right">تاريخ التسجيل</th>
+                                    <th class="p-3 text-right">عدد السجلات</th>
+                                    <th class="p-3 text-right">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-users-table-body">
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- User Details Section (initially hidden) -->
+                <div id="user-details-section" class="bg-white p-4 rounded-lg shadow border mb-8 hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">تفاصيل المستخدم: <span id="user-details-name"></span></h3>
+                        <button id="close-user-details-btn" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                            <i class="fas fa-times"></i> إغلاق
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                        <div class="bg-white p-4 rounded-lg shadow border">
+                            <h4 class="text-md font-semibold text-gray-800 mb-4">سجلات المشاعر</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="p-3 text-right">التاريخ</th>
+                                            <th class="p-3 text-right">الشعور</th>
+                                            <th class="p-3 text-right">الشعور المحدد</th>
+                                            <th class="p-3 text-right">السبب</th>
+                                            <th class="p-3 text-right">النشاط</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="user-moods-table-body">
+                                        <!-- Will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-lg shadow border">
+                            <h4 class="text-md font-semibold text-gray-800 mb-4">تطور المشاعر مع الوقت</h4>
+                            <div class="h-64 flex items-center justify-center" id="user-mood-trend-chart-container">
+                                <canvas id="user-mood-trend-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Content Sections -->
+    <div id="relax-content-section" class="min-h-screen hidden py-12 section-fade">
+        <div class="container mx-auto px-4">
+            <div class="bg-white p-6 rounded-xl shadow-lg max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold text-blue-600 mb-6 text-center">فيديوهات الاسترخاء</h2>
+                <div class="mb-8">
+                    <div class="aspect-w-16 aspect-h-9">
+                        <iframe src="https://www.youtube.com/embed/inpok4MKVLM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="rounded-lg shadow-lg w-full h-96"></iframe>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-indigo-50 p-4 rounded-lg shadow cursor-pointer hover:bg-indigo-100 transition-colors" onclick="changeVideo('https://www.youtube.com/embed/inpok4MKVLM')">
+                        <h3 class="font-semibold mb-2">تأمل واسترخاء للتخلص من القلق والتوتر</h3>
+                        <p class="text-sm text-gray-600">مدة الفيديو: 15 دقيقة</p>
+                    </div>
+                    <div class="bg-indigo-50 p-4 rounded-lg shadow cursor-pointer hover:bg-indigo-100 transition-colors" onclick="changeVideo('https://www.youtube.com/embed/O-6f5wQXSu8')">
+                        <h3 class="font-semibold mb-2">موسيقى هادئة للاسترخاء والنوم</h3>
+                        <p class="text-sm text-gray-600">مدة الفيديو: 3 ساعات</p>
+                    </div>
+                    <div class="bg-indigo-50 p-4 rounded-lg shadow cursor-pointer hover:bg-indigo-100 transition-colors" onclick="changeVideo('https://www.youtube.com/embed/lFcSrYw-ARY')">
+                        <h3 class="font-semibold mb-2">تمارين استرخاء العقل والجسم</h3>
+                        <p class="text-sm text-gray-600">مدة الفيديو: 20 دقيقة</p>
+                    </div>
+                </div>
+                <div class="mt-6 text-center">
+                    <button onclick="goToSection('mood-section')" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        العودة للرئيسية
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="breathing-content-section" class="min-h-screen hidden py-12 section-fade">
+        <div class="container mx-auto px-4">
+            <div class="bg-white p-6 rounded-xl shadow-lg max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-blue-600 mb-6 text-center">تمارين التنفس</h2>
+                <div class="flex justify-center mb-8">
+                    <div id="breathing-circle" class="w-64 h-64 rounded-full bg-blue-100 flex items-center justify-center relative">
+                        <div class="text-center">
+                            <p id="breathing-text" class="text-xl font-bold text-blue-600">استعد</p>
+                            <p id="breathing-counter" class="text-5xl font-bold text-blue-800 mt-2">3</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mb-6">
+                    <p class="text-lg mb-4">تمرين التنفس 4-7-8 لتخفيف التوتر والقلق</p>
+                    <button id="start-breathing-btn" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        ابدأ التمرين
+                    </button>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h3 class="font-semibold mb-2">تعليمات التمرين:</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>خذ نفسًا عميقًا من الأنف لمدة 4 ثوانٍ</li>
+                        <li>احتفظ بالنفس لمدة 7 ثوانٍ</li>
+                        <li>أخرج الهواء من الفم ببطء لمدة 8 ثوانٍ</li>
+                        <li>كرر هذه العملية 3 مرات</li>
+                    </ul>
+                </div>
+                <div class="mt-6 text-center">
+                    <button onclick="goToSection('mood-section')" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        العودة للرئيسية
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pomodoro-content-section" class="min-h-screen hidden py-12 section-fade">
+        <div class="container mx-auto px-4">
+            <div class="bg-white p-6 rounded-xl shadow-lg max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-blue-600 mb-6 text-center">مؤقت بومودورو</h2>
+                <div class="flex justify-center mb-8">
+                    <div id="pomodoro-timer" class="w-64 h-64 rounded-full bg-red-100 flex items-center justify-center border-8 border-red-300">
+                        <div class="text-center">
+                            <p id="timer-type" class="text-xl font-bold text-red-600">وقت العمل</p>
+                            <p id="timer-display" class="text-5xl font-bold text-red-800 mt-2">25:00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-center space-x-4 space-x-reverse mb-6">
+                    <button id="start-timer-btn" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        <i class="fas fa-play ml-1"></i> بدء
+                    </button>
+                    <button id="pause-timer-btn" class="px-6 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors disabled:opacity-50" disabled>
+                        <i class="fas fa-pause ml-1"></i> إيقاف مؤقت
+                    </button>
+                    <button id="reset-timer-btn" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                        <i class="fas fa-redo ml-1"></i> إعادة ضبط
+                    </button>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <h3 class="font-semibold mb-2">تقنية بومودورو:</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>25 دقيقة من العمل أو الدراسة المركزة</li>
+                        <li>5 دقائق من الراحة</li>
+                        <li>بعد 4 دورات، خذ استراحة طويلة لمدة 15-30 دقيقة</li>
+                    </ul>
+                </div>
+                <div class="mt-6 text-center">
+                    <button onclick="goToSection('mood-section')" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        العودة للرئيسية
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="plan-content-section" class="min-h-screen hidden py-12 section-fade">
+        <div class="container mx-auto px-4">
+            <div class="bg-white p-6 rounded-xl shadow-lg max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-blue-600 mb-6 text-center">قائمة المهام</h2>
+                <div class="mb-4">
+                    <div class="flex">
+                        <input type="text" id="todo-input" placeholder="أضف مهمة جديدة..." class="flex-1 border border-gray-300 rounded-r-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button id="add-todo-btn" class="bg-blue-600 text-white px-4 py-2 rounded-l-lg hover:bg-blue-700 transition-colors">
+                            إضافة
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg mb-4">
+                    <h3 class="font-semibold mb-2">قائمة المهام الخاصة بك:</h3>
+                    <ul id="todo-list" class="space-y-2">
+                        <!-- Todo items will be added here -->
+                    </ul>
+                </div>
+                <div id="no-todos-message" class="text-center py-4 text-gray-500">
+                    لا توجد مهام حالية. أضف بعض المهام للبدء!
+                </div>
+                <div class="mt-6 text-center">
+                    <button onclick="goToSection('mood-section')" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        العودة للرئيسية
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // User data and app state
+        let userData = {
+            id: null,
+            username: '',
+            name: '',
+            email: '',
+            is_admin: false,
+            primaryMood: '',
+            specificMood: '',
+            reason: '',
+            activity: ''
+        };
+
+        // Translated mood data
+        const specificMoods = {
+            happy: ['متحمس', 'مرتاح', 'هادئ', 'ممتن'],
+            normal: ['مستقر', 'محايد', 'معتدل', 'متوازن'],
+            unhappy: ['متوتر', 'قلق', 'حزين', 'مرهق']
+        };
+
+        // Mapping for translating between Arabic and English
+        const moodTranslation = {
+            // Arabic to English
+            'سعيد': 'happy',
+            'طبيعي': 'normal',
+            'حزين': 'unhappy',
+            // English to Arabic
+            'happy': 'سعيد',
+            'normal': 'طبيعي',
+            'unhappy': 'حزين',
+            // Specific moods
+            'متحمس': 'excited',
+            'مرتاح': 'content',
+            'هادئ': 'peaceful',
+            'ممتن': 'grateful',
+            'مستقر': 'calm',
+            'محايد': 'neutral',
+            'معتدل': 'stable',
+            'متوازن': 'balanced',
+            'متوتر': 'stressed',
+            'قلق': 'anxious',
+            'حزين': 'sad',
+            'مرهق': 'exhausted',
+            // Reasons
+            'المدرسة/الجامعة': 'school',
+            'العائلة': 'family',
+            'الأصدقاء': 'friends',
+            'الصحة': 'health',
+            'school': 'المدرسة/الجامعة',
+            'family': 'العائلة',
+            'friends': 'الأصدقاء',
+            'health': 'الصحة',
+            // Activities
+            'relax': 'فيديو استرخاء',
+            'plan': 'وضع خطة',
+            'breathing': 'تمارين تنفس',
+            'pomodoro': 'مؤقت بومودورو',
+            'chat': 'الدردشة مع المساعد الذكي'
+        };
+
+        // Todo items storage
+        let todoItems = JSON.parse(localStorage.getItem('todoItems')) || [];
+
+        // Show section and hide others
+        function showSection(sectionId) {
+            document.querySelectorAll('div[id$="-section"]').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        // Go to a specific section
+        function goToSection(sectionId) {
+            showSection(sectionId);
+        }
+
+        // Go back to previous section
+        function goBack(sectionId) {
+            showSection(sectionId);
+        }
+
+        // Login/Register Tabs
+        document.getElementById('login-tab').addEventListener('click', function() {
+          this.classList.add('border-b-2', 'border-blue-600', 'text-blue-600');
+          document.getElementById('register-tab').classList.remove('border-b-2', 'border-blue-600', 'text-blue-600');
+          document.getElementById('register-tab').classList.add('text-gray-500');
+          document.getElementById('login-form').style.display = 'block';
+          document.getElementById('register-form').style.display = 'none';
+        });
+
+        document.getElementById('register-tab').addEventListener('click', function() {
+          this.classList.add('border-b-2', 'border-blue-600', 'text-blue-600');
+          document.getElementById('login-tab').classList.remove('border-b-2', 'border-blue-600', 'text-blue-600');
+          document.getElementById('login-tab').classList.add('text-gray-500');
+          document.getElementById('login-form').style.display = 'none';
+          document.getElementById('register-form').style.display = 'block';
+        });
+
+        // Login Form Submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Reset previous error messages
+          resetErrorMessages('loginForm');
+          
+          const username = document.getElementById('login-username').value;
+          const password = document.getElementById('login-password').value;
+          
+          // Client-side validation
+          let isValid = true;
+          
+          if (!username) {
+            showError('login-username-error', 'يرجى إدخال اسم المستخدم');
+            isValid = false;
+          }
+          
+          if (!password) {
+            showError('login-password-error', 'يرجى إدخال كلمة المرور');
+            isValid = false;
+          }
+          
+          if (!isValid) {
+            return;
+          }
+          
+          // Show loading state
+          const submitButton = document.getElementById('login-submit');
+          const originalText = submitButton.textContent;
+          submitButton.textContent = 'جاري تسجيل الدخول...';
+          submitButton.disabled = true;
+          
+          const loginUrl = 'auth.php';
+          const loginData = `action=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+          
+          console.log('Sending login request to:', loginUrl);
+          console.log('Login data:', loginData);
+          
+          fetch(loginUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: loginData
+          })
+          .then(response => {
+            console.log('Login response status:', response.status);
+            // Check if the response is okay first
+            if (!response.ok) {
+              throw new Error('Network response was not ok: ' + response.status);
+            }
+            
+            // Get the content type to handle non-JSON responses
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              return response.json().catch(error => {
+                console.error('Error parsing JSON:', error);
+                throw new Error('Invalid JSON response from server');
+              });
+            } else {
+              // Handle non-JSON response
+              return response.text().then(text => {
+                console.error('Server returned non-JSON response:', text);
+                throw new Error('Server returned non-JSON response');
+              });
+            }
+          })
+          .then(data => {
+            console.log('Login response data:', data);
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+            
+            const messageElement = document.getElementById('login-message');
+            messageElement.style.display = 'block';
+            
+            if (data.status === 'success') {
+              messageElement.textContent = 'تم تسجيل الدخول بنجاح';
+              messageElement.style.color = 'green';
+              messageElement.classList.add('success');
+              messageElement.classList.remove('error');
+              
+              // Save user data
+              userData = {
+                id: data.user.id,
+                username: data.user.username,
+                name: data.user.name,
+                is_admin: data.user.is_admin
+              };
+              
+              // Update UI based on login success
+              loginSuccess();
+              
+              // Redirect to home after a short delay
+              setTimeout(() => {
+                document.getElementById('welcome-section').classList.add('hidden');
+            document.getElementById('navbar').classList.remove('hidden');
+                document.getElementById('home-section').classList.remove('hidden');
+                
+                // Call checkSession again to ensure everything is updated
+                checkSession();
+              }, 1000);
+            } else {
+              messageElement.textContent = data.message || 'فشل تسجيل الدخول';
+              messageElement.style.color = 'red';
+              messageElement.classList.add('error');
+              messageElement.classList.remove('success');
+              
+              // Highlight specific field based on error message
+              if (data.message && data.message.includes('اسم المستخدم')) {
+                showError('login-username-error', data.message);
+              } else if (data.message && data.message.includes('كلمة المرور')) {
+                showError('login-password-error', data.message);
+              }
+            }
+          })
+          .catch(error => {
+            console.error('Error during login:', error);
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+            
+            const messageElement = document.getElementById('login-message');
+            messageElement.style.display = 'block';
+            messageElement.textContent = 'حدث خطأ في الاتصال بالخادم: ' + error.message;
+            messageElement.style.color = 'red';
+            messageElement.classList.add('error');
+            messageElement.classList.remove('success');
+          });
+        });
+
+        // Registration function
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Reset previous error messages
+          resetErrorMessages('registerForm');
+          
+          const username = document.getElementById('register-username').value;
+          const name = document.getElementById('register-name').value;
+          const password = document.getElementById('register-password').value;
+          const email = document.getElementById('register-email').value;
+          
+          // Client-side validation
+          let isValid = true;
+          
+          if (!username) {
+            showError('register-username-error', 'يرجى إدخال اسم المستخدم');
+            isValid = false;
+          } else if (username.length < 3) {
+            showError('register-username-error', 'يجب أن يكون اسم المستخدم 3 أحرف على الأقل');
+            isValid = false;
+          }
+          
+          if (!name) {
+            showError('register-name-error', 'يرجى إدخال الاسم الكامل');
+            isValid = false;
+          }
+          
+          if (!password) {
+            showError('register-password-error', 'يرجى إدخال كلمة المرور');
+            isValid = false;
+          } else if (password.length < 6) {
+            showError('register-password-error', 'يجب أن تكون كلمة المرور 6 أحرف على الأقل');
+            isValid = false;
+          }
+          
+          if (!email) {
+            showError('register-email-error', 'يرجى إدخال البريد الإلكتروني');
+            isValid = false;
+          } else if (!isValidEmail(email)) {
+            showError('register-email-error', 'يرجى إدخال بريد إلكتروني صحيح');
+            isValid = false;
+          }
+          
+          if (!isValid) {
+            return;
+          }
+          
+          // Show loading state
+          const submitButton = document.getElementById('register-submit');
+          const originalText = submitButton.textContent;
+          submitButton.textContent = 'جاري إنشاء الحساب...';
+          submitButton.disabled = true;
+          
+          const registerUrl = 'auth.php';
+          const registerData = `action=register&username=${encodeURIComponent(username)}&name=${encodeURIComponent(name)}&password=${encodeURIComponent(password)}&email=${encodeURIComponent(email)}`;
+          
+          console.log('Sending registration request to:', registerUrl);
+          console.log('Registration data:', registerData);
+          
+          fetch(registerUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: registerData
+          })
+          .then(response => {
+            console.log('Registration response status:', response.status);
+            return response.json();
+          })
+                .then(data => {
+            console.log('Registration response data:', data);
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+            
+            const messageElement = document.getElementById('register-message');
+            messageElement.style.display = 'block';
+            
+            if (data.status === 'success') {
+              messageElement.textContent = 'تم إنشاء الحساب بنجاح. جاري تسجيل الدخول...';
+              messageElement.style.color = 'green';
+              messageElement.classList.add('success');
+              messageElement.classList.remove('error');
+              
+              // Save user data
+              userData = {
+                id: data.user.id,
+                username: data.user.username,
+                name: data.user.name,
+                is_admin: data.user.is_admin
+              };
+              
+              // Update UI based on login success
+              loginSuccess();
+              
+              // Redirect to home after a short delay
+              setTimeout(() => {
+                document.getElementById('welcome-section').classList.add('hidden');
+                document.getElementById('navbar').classList.remove('hidden');
+                document.getElementById('home-section').classList.remove('hidden');
+              }, 1500);
+                    } else {
+              messageElement.textContent = data.message || 'فشل إنشاء الحساب';
+              messageElement.style.color = 'red';
+              messageElement.classList.add('error');
+              messageElement.classList.remove('success');
+              
+              // Highlight specific field based on error message
+              if (data.message && data.message.includes('اسم المستخدم')) {
+                showError('register-username-error', data.message);
+              } else if (data.message && data.message.includes('كلمة المرور')) {
+                showError('register-password-error', data.message);
+              } else if (data.message && data.message.includes('البريد الإلكتروني')) {
+                showError('register-email-error', data.message);
+              } else if (data.message && data.message.includes('الاسم')) {
+                showError('register-name-error', data.message);
+              }
+                    }
+                })
+                .catch(error => {
+            console.error('Error during registration:', error);
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+            
+            const messageElement = document.getElementById('register-message');
+            messageElement.style.display = 'block';
+            messageElement.textContent = 'حدث خطأ في الاتصال بالخادم';
+            messageElement.style.color = 'red';
+            messageElement.classList.add('error');
+            messageElement.classList.remove('success');
+          });
+        });
+
+        // Email validation helper function
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Function to reset error messages
+        function resetErrorMessages(formId) {
+            console.log("Resetting error messages for form:", formId);
+            
+            // Find all error message elements in the specified form
+            const form = document.getElementById(formId);
+            if (!form) {
+                console.error("Form not found:", formId);
+                return;
+            }
+            
+            // Clear error messages
+            const errorElements = form.querySelectorAll('[id$="-error"]');
+            errorElements.forEach(element => {
+                element.textContent = '';
+                element.style.display = 'none';
+                element.classList.add('hidden');
+            });
+            
+            // Remove error styling from inputs
+            const inputElements = form.querySelectorAll('input');
+            inputElements.forEach(input => {
+                input.classList.remove('border-red-500');
+            });
+            
+            // Clear any form-level message
+            const messageElement = document.getElementById(formId === 'loginForm' ? 'login-message' : 'register-message');
+            if (messageElement) {
+                messageElement.style.display = 'none';
+                messageElement.textContent = '';
+            }
+        }
+
+        // Function to show error message
+        function showError(elementId, message) {
+            console.log("Showing error:", elementId, message);
+            const errorElement = document.getElementById(elementId);
+            if (!errorElement) {
+                console.error("Error element not found:", elementId);
+                return;
+            }
+            
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            errorElement.classList.remove('hidden');
+            
+            // Add error styling to related input field
+            const inputId = elementId.replace('-error', '');
+            const inputElement = document.getElementById(inputId);
+            if (inputElement) {
+                inputElement.classList.add('border-red-500');
+            }
+        }
+
+        // Input field focus/blur handlers to clear error styling
+        document.getElementById('login-username').addEventListener('focus', function() {
+            this.classList.remove('border-red-500');
+            document.getElementById('login-username-error').classList.add('hidden');
+        });
+
+        document.getElementById('login-password').addEventListener('focus', function() {
+            this.classList.remove('border-red-500');
+            document.getElementById('login-password-error').classList.add('hidden');
+        });
+
+        document.getElementById('register-username').addEventListener('focus', function() {
+            this.classList.remove('border-red-500');
+            document.getElementById('register-username-error').classList.add('hidden');
+        });
+
+        document.getElementById('register-name').addEventListener('focus', function() {
+            this.classList.remove('border-red-500');
+            document.getElementById('register-name-error').classList.add('hidden');
+        });
+
+        document.getElementById('register-password').addEventListener('focus', function() {
+            this.classList.remove('border-red-500');
+            document.getElementById('register-password-error').classList.add('hidden');
+        });
+
+        document.getElementById('register-email').addEventListener('focus', function() {
+            this.classList.remove('border-red-500');
+            document.getElementById('register-email-error').classList.add('hidden');
+        });
+
+        // Function to handle successful login
+        function loginSuccess() {
+            // Update user name display
+            document.getElementById('user-name-display').textContent = userData.name;
+            
+            // Show/hide admin dashboard button if user is admin
+            if (userData.is_admin) {
+                document.getElementById('admin-dashboard-btn').classList.remove('hidden');
+            } else {
+                document.getElementById('admin-dashboard-btn').classList.add('hidden');
+            }
+            
+            // Check for session on page load
+            checkSession();
+        }
+
+        // Check if user is already logged in
+        function checkSession() {
+            console.log("checkSession function called");
+            
+            // Safely update session status text if element exists
+            const sessionStatusElement = document.getElementById('session-status');
+            if (sessionStatusElement) {
+                sessionStatusElement.textContent = 'جاري التحقق من تسجيل الدخول...';
+            }
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('action', 'check_session');
+            
+            // Convert FormData to URLSearchParams for fetch
+            const params = new URLSearchParams();
+            for (const pair of formData) {
+                params.append(pair[0], pair[1]);
+            }
+            
+            console.log("Sending check_session request to auth.php");
+            
+            // Send request to verify session
+            fetch('auth.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params
+            })
+            .then(response => {
+                console.log("Session check response status:", response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log("Session check response data:", data);
+                
+                if (data.status === 'success') {
+                    // User is logged in
+                    console.log("User is logged in:", data.user);
+                    
+                    // Safely update DOM elements if they exist
+                    const usernameDisplay = document.getElementById('username-display');
+                    if (usernameDisplay) {
+                        usernameDisplay.textContent = data.user.name;
+                    }
+                    
+                    if (sessionStatusElement) {
+                        sessionStatusElement.textContent = 'مرحباً، ' + data.user.name;
+                    }
+                    
+                    // Save user data globally
+                    userData = {
+                        id: data.user.id,
+                        username: data.user.username,
+                        name: data.user.name,
+                        is_admin: data.user.is_admin
+                    };
+                    
+                    // Show user sections and hide guest sections
+                    document.querySelectorAll('.logged-in-only').forEach(el => el.style.display = 'block');
+                    document.querySelectorAll('.logged-out-only').forEach(el => el.style.display = 'none');
+                    
+                    // If the user is an admin, show admin sections
+                    if (data.user.is_admin) {
+                        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+                    } else {
+                        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+                    }
+                    
+                    // Try to navigate to home section if it exists
+                    const homeSection = document.getElementById('home-section');
+                    if (homeSection && typeof navigateTo === 'function') {
+                        navigateTo('home-section');
+                    }
+                } else {
+                    // User is not logged in
+                    console.log("User is not logged in");
+                    
+                    if (sessionStatusElement) {
+                        sessionStatusElement.textContent = 'لم يتم تسجيل الدخول';
+                    }
+                    
+                    // Hide user sections and show guest sections
+                    document.querySelectorAll('.logged-in-only').forEach(el => el.style.display = 'none');
+                    document.querySelectorAll('.logged-out-only').forEach(el => el.style.display = 'block');
+                    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+                    
+                    // Try to navigate to landing section if it exists
+                    const landingSection = document.getElementById('landing-section');
+                    if (landingSection && typeof navigateTo === 'function') {
+                        navigateTo('landing-section');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Session check error:', error);
+                if (sessionStatusElement) {
+                    sessionStatusElement.textContent = 'خطأ في التحقق من الجلسة';
+                }
+            });
+        }
+
+        // Logout function
+        document.getElementById('logout-btn').addEventListener('click', function() {
+          // Show loading state
+          this.textContent = 'جاري تسجيل الخروج...';
+          this.disabled = true;
+          
+          const logoutUrl = 'auth.php';
+          const logoutData = 'action=logout';
+          
+          console.log('Sending logout request to:', logoutUrl);
+          
+          fetch(logoutUrl, {
+                method: 'POST',
+                headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: logoutData
+          })
+          .then(response => {
+            console.log('Logout response status:', response.status);
+            return response.json();
+          })
+          .then(data => {
+            console.log('Logout response data:', data);
+            if (data.status === 'success') {
+              // Reset user data
+              userData = null;
+              
+              // Hide nav and sections
+              document.getElementById('navbar').classList.add('hidden');
+              document.getElementById('welcome-section').classList.remove('hidden');
+              
+              // Hide all other sections
+              document.querySelectorAll('.section-fade').forEach(section => {
+                section.classList.add('hidden');
+              });
+              
+              document.getElementById('home-section').classList.add('hidden');
+              document.getElementById('admin-dashboard-section').classList.add('hidden');
+              document.getElementById('chat-section').classList.add('hidden');
+              document.getElementById('mood-history-section').classList.add('hidden');
+              
+              // Reset forms
+              document.getElementById('loginForm').reset();
+              document.getElementById('registerForm').reset();
+              
+              // Show login form
+              document.getElementById('login-form').style.display = 'block';
+              document.getElementById('register-form').style.display = 'none';
+              
+              // Reset login tab
+              document.getElementById('login-tab').classList.add('border-b-2', 'border-blue-600', 'text-blue-600');
+              document.getElementById('register-tab').classList.remove('border-b-2', 'border-blue-600', 'text-blue-600');
+              document.getElementById('register-tab').classList.add('text-gray-500');
+            } else {
+              console.error('Logout failed:', data.message);
+              this.textContent = 'تسجيل الخروج';
+              this.disabled = false;
+            }
+          })
+          .catch(error => {
+            console.error('Error during logout:', error);
+            this.textContent = 'تسجيل الخروج';
+            this.disabled = false;
+          });
+        });
+
+        // Handle navigation menu clicks
+        document.getElementById('home-btn').addEventListener('click', function() {
+          showSectionWithEffect('home-section');
+          setActiveNavButton(this);
+        });
+
+        document.getElementById('mood-record-btn').addEventListener('click', function() {
+          showSectionWithEffect('mood-section');
+          setActiveNavButton(this);
+        });
+
+        document.getElementById('history-btn').addEventListener('click', function() {
+          showSectionWithEffect('mood-history-section');
+          setActiveNavButton(this);
+          loadUserHistory(); // Load the history data when the button is clicked
+        });
+
+        document.getElementById('chat-btn').addEventListener('click', function() {
+          showSectionWithEffect('chat-section');
+          setActiveNavButton(this);
+        });
+
+        document.getElementById('admin-dashboard-btn').addEventListener('click', function() {
+          showSectionWithEffect('admin-dashboard-section');
+          setActiveNavButton(this);
+          loadAdminDashboard(); // Load admin data when the button is clicked
+        });
+
+        // Set active navigation button
+        function setActiveNavButton(button) {
+          // Remove active class from all nav buttons
+          document.querySelectorAll('#navbar button').forEach(btn => {
+            btn.classList.remove('nav-active');
+          });
+          
+          // Add active class to clicked button
+          button.classList.add('nav-active');
+        }
+
+        // Show section with smooth transition
+        function showSectionWithEffect(sectionId) {
+          // Hide all sections
+          document.querySelectorAll('[id$="-section"]').forEach(section => {
+            section.classList.add('hidden');
+          });
+          
+          // Show selected section with animation
+          const section = document.getElementById(sectionId);
+          section.classList.remove('hidden');
+          section.classList.add('section-slide-in');
+          
+          // Remove animation class after animation completes
+          setTimeout(() => {
+            section.classList.remove('section-slide-in');
+          }, 500);
+          
+          // Scroll to top
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success', duration = 3000) {
+          // Create toast element if it doesn't exist
+          let toast = document.querySelector('.toast');
+          if (!toast) {
+            toast = document.createElement('div');
+            toast.className = 'toast';
+            document.body.appendChild(toast);
+          }
+          
+          // Set toast content and type
+          toast.textContent = message;
+          toast.className = 'toast';
+          if (type === 'error') toast.classList.add('error');
+          if (type === 'warning') toast.classList.add('warning');
+          
+          // Show toast
+          setTimeout(() => {
+            toast.classList.add('show');
+          }, 10);
+          
+          // Hide toast after duration
+          setTimeout(() => {
+            toast.classList.remove('show');
+          }, duration);
+        }
+
+        // Todo List Functionality
+        function renderTodoList() {
+            const todoList = document.getElementById('todo-list');
+            const noTodosMessage = document.getElementById('no-todos-message');
+            
+            todoList.innerHTML = '';
+            
+            if (todoItems.length === 0) {
+                noTodosMessage.classList.remove('hidden');
+                return;
+            }
+            
+            noTodosMessage.classList.add('hidden');
+            
+            todoItems.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.classList.add('flex', 'items-center', 'justify-between', 'p-2', 'border-b');
+                
+                const textSpan = document.createElement('span');
+                textSpan.classList.add('flex', 'items-center');
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.classList.add('ml-2');
+                checkbox.checked = item.completed;
+                checkbox.addEventListener('change', () => toggleTodoComplete(index));
+                
+                const text = document.createElement('span');
+                text.textContent = item.text;
+                if (item.completed) {
+                    text.classList.add('line-through', 'text-gray-500');
+                }
+                
+                textSpan.appendChild(checkbox);
+                textSpan.appendChild(text);
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.innerHTML = '<i class="fas fa-trash text-red-500"></i>';
+                deleteBtn.addEventListener('click', () => deleteTodoItem(index));
+                
+                li.appendChild(textSpan);
+                li.appendChild(deleteBtn);
+                todoList.appendChild(li);
+            });
+        }
+
+        function addTodoItem() {
+            const input = document.getElementById('todo-input');
+            const text = input.value.trim();
+            
+            if (text) {
+                todoItems.push({
+                    text,
+                    completed: false
+                });
+                
+                localStorage.setItem('todoItems', JSON.stringify(todoItems));
+                input.value = '';
+                renderTodoList();
+            }
+        }
+
+        function toggleTodoComplete(index) {
+            todoItems[index].completed = !todoItems[index].completed;
+            localStorage.setItem('todoItems', JSON.stringify(todoItems));
+            renderTodoList();
+        }
+
+        function deleteTodoItem(index) {
+            todoItems.splice(index, 1);
+            localStorage.setItem('todoItems', JSON.stringify(todoItems));
+            renderTodoList();
+        }
+
+        document.getElementById('add-todo-btn').addEventListener('click', addTodoItem);
+        document.getElementById('todo-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTodoItem();
+            }
+        });
+
+        // Breathing Exercise Functionality
+        let breathingInterval;
+        let breathingPhase = 'prepare';
+        let breathingCount = 3;
+        
+        function startBreathingExercise() {
+            const breathingCircle = document.getElementById('breathing-circle');
+            const breathingText = document.getElementById('breathing-text');
+            const breathingCounter = document.getElementById('breathing-counter');
+            
+            // Initial countdown
+            breathingPhase = 'prepare';
+            breathingCount = 3;
+            breathingText.textContent = 'استعد';
+            breathingCounter.textContent = breathingCount;
+            
+            document.getElementById('start-breathing-btn').disabled = true;
+            
+            breathingInterval = setInterval(() => {
+                if (breathingPhase === 'prepare') {
+                    breathingCount--;
+                    breathingCounter.textContent = breathingCount;
+                    
+                    if (breathingCount === 0) {
+                        breathingPhase = 'inhale';
+                        breathingCount = 4;
+                        breathingText.textContent = 'استنشق';
+                        breathingCircle.classList.add('scale-125');
+                        breathingCircle.style.transition = 'all 4s ease';
+                    }
+                } else if (breathingPhase === 'inhale') {
+                    breathingCount--;
+                    breathingCounter.textContent = breathingCount;
+                    
+                    if (breathingCount === 0) {
+                        breathingPhase = 'hold';
+                        breathingCount = 7;
+                        breathingText.textContent = 'احبس النفس';
+                    }
+                } else if (breathingPhase === 'hold') {
+                    breathingCount--;
+                    breathingCounter.textContent = breathingCount;
+                    
+                    if (breathingCount === 0) {
+                        breathingPhase = 'exhale';
+                        breathingCount = 8;
+                        breathingText.textContent = 'ازفر';
+                        breathingCircle.classList.remove('scale-125');
+                        breathingCircle.style.transition = 'all 8s ease';
+                    }
+                } else if (breathingPhase === 'exhale') {
+                    breathingCount--;
+                    breathingCounter.textContent = breathingCount;
+                    
+                    if (breathingCount === 0) {
+                        // Reset for next round or finish
+                        clearInterval(breathingInterval);
+                        breathingText.textContent = 'أحسنت!';
+                        breathingCounter.textContent = '';
+                        document.getElementById('start-breathing-btn').disabled = false;
+                    }
+                }
+            }, 1000);
+        }
+
+        document.getElementById('start-breathing-btn').addEventListener('click', startBreathingExercise);
+
+        // Pomodoro Timer Functionality
+        let timerInterval;
+        let minutes = 25;
+        let seconds = 0;
+        let isTimerRunning = false;
+        let timerType = 'work'; // 'work' or 'break'
+        
+        function startTimer() {
+            if (isTimerRunning) return;
+            
+            isTimerRunning = true;
+            document.getElementById('start-timer-btn').disabled = true;
+            document.getElementById('pause-timer-btn').disabled = false;
+            
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            document.getElementById('start-timer-btn').disabled = false;
+            document.getElementById('pause-timer-btn').disabled = true;
+        }
+        
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            
+            if (timerType === 'work') {
+                minutes = 25;
+                document.getElementById('timer-type').textContent = 'وقت العمل';
+                document.getElementById('pomodoro-timer').classList.remove('bg-green-100', 'border-green-300');
+                document.getElementById('pomodoro-timer').classList.add('bg-red-100', 'border-red-300');
+            } else {
+                minutes = 5;
+                document.getElementById('timer-type').textContent = 'وقت الراحة';
+                document.getElementById('pomodoro-timer').classList.remove('bg-red-100', 'border-red-300');
+                document.getElementById('pomodoro-timer').classList.add('bg-green-100', 'border-green-300');
+            }
+            
+            seconds = 0;
+            updateTimerDisplay();
+            document.getElementById('start-timer-btn').disabled = false;
+            document.getElementById('pause-timer-btn').disabled = true;
+        }
+        
+        function updateTimer() {
+            if (seconds === 0) {
+                if (minutes === 0) {
+                    // Timer complete
+                    clearInterval(timerInterval);
+                    isTimerRunning = false;
+                    
+                    // Play sound
+                    const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+                    audio.play();
+                    
+                    // Switch timer type
+                    timerType = timerType === 'work' ? 'break' : 'work';
+                    resetTimer();
+                    return;
+                }
+                minutes--;
+                seconds = 59;
+            } else {
+                seconds--;
+            }
+            
+            updateTimerDisplay();
+        }
+        
+        function updateTimerDisplay() {
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer-display').textContent = display;
+        }
+        
+        document.getElementById('start-timer-btn').addEventListener('click', startTimer);
+        document.getElementById('pause-timer-btn').addEventListener('click', pauseTimer);
+        document.getElementById('reset-timer-btn').addEventListener('click', resetTimer);
+
+        // Relaxation Videos
+        function changeVideo(videoSrc) {
+            const iframe = document.querySelector('#relax-content-section iframe');
+            iframe.src = videoSrc;
+        }
+
+        // Chat Functionality
+        document.getElementById('send-chat-btn').addEventListener('click', sendChatMessage);
+        document.getElementById('chat-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addMessageToChat('user', message);
+            input.value = '';
+            
+            // In a real app, send to backend for AI processing
+            fetch('chat.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: userData.id,
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    addMessageToChat('bot', data.response);
+                } else {
+                    simulateChatResponse(message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                simulateChatResponse(message);
+            });
+        }
+
+        function addMessageToChat(sender, message) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message', sender);
+            
+            if (sender === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="flex items-end justify-end">
+                        <div class="flex flex-col space-y-2 text-sm max-w-xs mx-2 order-1">
+                            <div><span class="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white">${message}</span></div>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=${userData.name}" alt="User" class="w-8 h-8 rounded-full order-2">
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="flex items-end">
+                        <div class="flex flex-col space-y-2 text-sm max-w-xs mx-2 order-2">
+                            <div><span class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-blue-100 text-gray-800">${message}</span></div>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=AI&background=2563eb&color=fff" alt="AI" class="w-8 h-8 rounded-full order-1">
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function simulateChatResponse(message) {
+            // More sophisticated rule-based chatbot with better responses
+            let response;
+            message = message.trim().toLowerCase();
+            
+            // General emotional state responses
+            if (message.includes('سعيد') || message.includes('سعادة') || message.includes('فرح') || message.includes('مبسوط')) {
+                response = 'رائع! أنا سعيد لسماع ذلك. الشعور بالسعادة يعزز صحتك العامة ويزيد من إنتاجيتك. حاول أن تستمتع بهذه اللحظات وتتذكر ما الذي جعلك سعيداً لتكرره في المستقبل.';
+            } 
+            else if (message.includes('حزين') || message.includes('حزن') || message.includes('اكتئاب') || message.includes('تعيس')) {
+                response = 'أتفهم شعورك. الحزن هو جزء طبيعي من الحياة، ولكنه ليس نهاية المطاف. هل ترغب في مشاركة سبب حزنك؟ يمكنني اقتراح بعض الأنشطة التي قد تساعدك على تحسين مزاجك مثل الاستماع للموسيقى المفضلة أو التنزه في الهواء الطلق.';
+            } 
+            else if (message.includes('قلق') || message.includes('توتر') || message.includes('خوف') || message.includes('عصبي')) {
+                response = 'القلق شعور شائع، ولكن يمكن التغلب عليه. جرب تمارين التنفس العميق: خذ نفس عميق واحتفظ به لمدة 4 ثوان، ثم أخرجه ببطء. كرر هذا 5-10 مرات. يمكنك أيضاً كتابة مصادر قلقك لتفريغ ذهنك. هل تريد تجربة تمرين التنفس الآن؟';
+            } 
+            else if (message.includes('غضب') || message.includes('غاضب') || message.includes('عصبية')) {
+                response = 'الغضب شعور قوي وطبيعي. حاول أن تأخذ وقتاً للتهدئة قبل اتخاذ أي إجراء. عد للعشرة، خذ نفساً عميقاً، أو ابتعد عن الموقف لبعض الوقت. التمارين البدنية مثل المشي السريع يمكن أن تساعد في تفريغ الطاقة السلبية.';
+            }
+            
+            // Problems and situations
+            else if (message.includes('مشكلة') || message.includes('صعوبة') || message.includes('تحدي')) {
+                response = 'المشاكل جزء من الحياة وفرصة للنمو. حاول تقسيم المشكلة إلى أجزاء أصغر يمكن التعامل معها. فكر في الحلول الممكنة واختر أفضلها. تذكر أنه من الجيد طلب المساعدة من الأشخاص الذين تثق بهم.';
+            }
+            else if (message.includes('دراسة') || message.includes('امتحان') || message.includes('المدرسة') || message.includes('الجامعة')) {
+                response = 'ضغوط الدراسة يمكن أن تكون صعبة. حاول تنظيم وقتك وتقسيم المهام إلى أجزاء صغيرة. استخدم تقنية بومودورو للتركيز، واحرص على أخذ فترات راحة. تناول الطعام الصحي والنوم الكافي سيساعدانك على التركيز بشكل أفضل.';
+            }
+            else if (message.includes('عمل') || message.includes('وظيفة') || message.includes('زملاء') || message.includes('مدير')) {
+                response = 'بيئة العمل يمكن أن تكون مصدراً للتوتر. حاول وضع حدود واضحة بين العمل والحياة الشخصية. تواصل بصراحة مع زملائك ومديرك حول ما يزعجك. وتذكر أخذ استراحات قصيرة خلال يوم العمل لتجديد نشاطك الذهني.';
+            }
+            else if (message.includes('علاقة') || message.includes('حب') || message.includes('شريك') || message.includes('زواج')) {
+                response = 'العلاقات تتطلب تواصلاً صادقاً واحتراماً متبادلاً. حاول دائماً التحدث عن مشاعرك بصراحة، والاستماع بانفتاح للطرف الآخر. تذكر أن الخلافات طبيعية، والمهم هو كيفية التعامل معها بطريقة صحية.';
+            }
+            
+            // Self-care and well-being
+            else if (message.includes('نوم') || message.includes('أرق') || message.includes('تعب')) {
+                response = 'النوم الجيد أساسي لصحتك النفسية والجسدية. حاول النوم والاستيقاظ في نفس الوقت يومياً، وأنشئ روتيناً للاسترخاء قبل النوم. تجنب الكافيين والشاشات قبل النوم بساعة على الأقل، واجعل غرفة نومك مظلمة وهادئة.';
+            }
+            else if (message.includes('طعام') || message.includes('تغذية') || message.includes('أكل') || message.includes('جوع')) {
+                response = 'الغذاء الصحي يؤثر إيجاباً على مزاجك وطاقتك. حاول تناول وجبات متوازنة تشمل الخضروات والفواكه والبروتينات الصحية. اشرب الماء بكميات كافية، وقلل من الأطعمة المصنعة والسكريات. وتذكر أن تناول الطعام ببطء يساعد على الاستمتاع به والشعور بالشبع.';
+            }
+            else if (message.includes('رياضة') || message.includes('تمرين') || message.includes('نشاط')) {
+                response = 'النشاط البدني المنتظم يحسن المزاج ويقلل التوتر. حتى 30 دقيقة من المشي اليومي تُحدث فرقاً كبيراً. اختر نشاطاً تستمتع به، سواء كان المشي أو الرقص أو ركوب الدراجة. وتذكر أن البداية البسيطة أفضل من عدم البدء.';
+            }
+            
+            // General greetings and conversation starters
+            else if (message.includes('مرحبا') || message.includes('أهلا') || message.includes('السلام عليكم')) {
+                response = 'أهلاً بك! كيف يمكنني مساعدتك اليوم؟ أنا هنا للاستماع والمساعدة في تحسين حالتك النفسية.';
+            }
+            else if (message.includes('من أنت') || message.includes('ما اسمك')) {
+                response = 'أنا مساعدك الرقمي في تطبيق السعادة النفسية. أنا هنا لمساعدتك في التعبير عن مشاعرك وتقديم نصائح لتحسين حالتك النفسية.';
+            }
+            else if (message.includes('كيف حالك') || message.includes('كيف الحال')) {
+                response = 'أنا بخير، شكراً لسؤالك! الأهم هو كيف حالك أنت اليوم؟ أخبرني عن مشاعرك أو أي شيء تفكر فيه.';
+            }
+            else if (message.includes('شكرا') || message.includes('ممتن')) {
+                response = 'العفو! أنا سعيد بأن أكون مفيداً. تذكر أنني موجود دائماً للاستماع ومساعدتك. لا تتردد في التواصل معي في أي وقت.';
+            }
+            // Catch-all response for unrecognized input
+            else {
+                response = 'شكراً لمشاركة أفكارك معي. هل يمكنك إخباري المزيد عن مشاعرك؟ أنا هنا للاستماع والمساعدة قدر الإمكان.';
+            }
+            
+            setTimeout(() => {
+                addMessageToChat('bot', response);
+                
+                // Follow-up question for deeper engagement
+                if (!message.includes('شكرا') && Math.random() > 0.5) {
+                    setTimeout(() => {
+                        const followUp = 'هل هناك شيء آخر تود التحدث عنه أو الاستفسار حوله؟';
+                        addMessageToChat('bot', followUp);
+                    }, 2000);
+                }
+            }, 1000);
+        }
+
+        // Function to enhance chat interface
+        function initializeChat() {
+            // Add welcome message
+            setTimeout(() => {
+                addMessageToChat('bot', 'مرحباً بك في المساعد النفسي! أنا هنا للاستماع إليك ومساعدتك. كيف يمكنني مساعدتك اليوم؟');
+            }, 500);
+            
+            // Add suggested questions/prompts
+            const suggestedPrompts = [
+                'أشعر بالقلق',
+                'أنا سعيد اليوم',
+                'لدي مشكلة في العمل',
+                'كيف أتعامل مع الضغط؟'
+            ];
+            
+            const promptsContainer = document.createElement('div');
+            promptsContainer.className = 'suggested-prompts my-4';
+            promptsContainer.innerHTML = '<p class="text-sm text-gray-600 mb-2">يمكنك البدء بإحدى هذه العبارات:</p>';
+            
+            suggestedPrompts.forEach(prompt => {
+                const promptButton = document.createElement('button');
+                promptButton.className = 'bg-gray-100 hover:bg-gray-200 rounded-full px-3 py-1 text-sm m-1 transition-colors';
+                promptButton.textContent = prompt;
+                promptButton.onclick = () => {
+                    document.getElementById('chat-input').value = prompt;
+                    document.getElementById('send-chat-btn').click();
+                };
+                promptsContainer.appendChild(promptButton);
+            });
+            
+            document.querySelector('#chat-section .bg-white').appendChild(promptsContainer);
+        }
+
+        // Initialize chat when chat section is shown
+        document.getElementById('chat-btn').addEventListener('click', function() {
+            if (document.getElementById('chat-messages').children.length === 0) {
+                initializeChat();
+            }
+        });
+
+        // Admin Dashboard
+        function loadAdminDashboard() {
+            // Get admin dashboard statistics
+            fetch('admin_dashboard.php?action=get_stats')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const stats = data.stats;
+                        
+                        // Update counters
+                        document.getElementById('total-users').textContent = stats.total_users;
+                        document.getElementById('total-records').textContent = stats.total_moods;
+                        
+                        // Calculate average happiness (simplified example)
+                        let happinessScore = 0;
+                        let totalEntries = 0;
+                        stats.mood_distribution.forEach(mood => {
+                            let score = 0;
+                            if (mood.primary_mood === 'سعيد') score = 100;
+                            else if (mood.primary_mood === 'طبيعي') score = 50;
+                            else if (mood.primary_mood === 'حزين') score = 0;
+                            
+                            happinessScore += score * mood.count;
+                            totalEntries += parseInt(mood.count);
+                        });
+                        
+                        const avgHappiness = totalEntries > 0 ? Math.round(happinessScore / totalEntries) : 0;
+                        document.getElementById('avg-happiness').textContent = avgHappiness + '%';
+                        
+                        // Create charts
+                        createMoodDistributionChart(stats.mood_distribution);
+                        createActivityDistributionChart(stats.activity_distribution);
+                        createMoodTrendChart(stats.mood_trends);
+                        
+                        // Populate recent users table
+                        populateRecentUsersTable(stats.recent_users);
+                    }
+                })
+                .catch(error => console.error('Error loading admin dashboard:', error));
+        }
+
+        function createMoodDistributionChart(data) {
+            const ctx = document.getElementById('mood-chart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['سعيد', 'طبيعي', 'حزين'],
+                    datasets: [{
+                        data: [data.happy, data.normal, data.unhappy],
+                        backgroundColor: ['#FCD34D', '#E5E7EB', '#93C5FD'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        function createActivityDistributionChart(data) {
+            const ctx = document.getElementById('activity-chart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['فيديو استرخاء', 'تمارين تنفس', 'وضع خطة', 'مؤقت بومودورو'],
+                    datasets: [{
+                        data: [data.relax, data.breathing, data.plan, data.pomodoro],
+                        backgroundColor: ['#C4B5FD', '#FECACA', '#A7F3D0', '#BFDBFE'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        function createMoodTrendChart(data) {
+            const ctx = document.getElementById('mood-trend-chart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(entry => entry.date),
+                    datasets: [{
+                        label: 'متوسط السعادة',
+                        data: data.map(entry => entry.happiness),
+                        borderColor: '#FCD34D',
+                        backgroundColor: 'rgba(252, 211, 77, 0.2)',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            display: false
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function populateRecentUsersTable(users) {
+            const tableBody = document.getElementById('recent-users-table-body');
+            tableBody.innerHTML = '';
+            
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="border p-3">${user.name}</td>
+                    <td class="border p-3">${user.email}</td>
+                    <td class="border p-3">${user.date}</td>
+                    <td class="border p-3">${user.records}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Load user history
+        function loadUserHistory() {
+            const historyTable = document.getElementById('history-table-body');
+            const noHistoryMessage = document.getElementById('no-history-message');
+            
+            // Show loading state
+            historyTable.innerHTML = `
+                <tr>
+                  <td colspan="5" class="text-center py-4">
+                    <div class="inline-block w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                    جاري تحميل البيانات...
+                  </td>
+                </tr>
+            `;
+            noHistoryMessage.classList.add('hidden');
+            
+            // Fetch mood history from database
+            fetch('get_moods.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.moods.length > 0) {
+                        displayMoodHistory(data.moods);
+                    } else {
+                        historyTable.innerHTML = '';
+                        noHistoryMessage.classList.remove('hidden');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching mood history:', error);
+                    historyTable.innerHTML = `
+                        <tr>
+                          <td colspan="5" class="text-center py-4 text-red-600">
+                            <i class="fas fa-exclamation-circle mr-2"></i>
+                            حدث خطأ في تحميل البيانات، يرجى المحاولة مرة أخرى
+                          </td>
+                        </tr>
+                    `;
+                });
+        }
+
+        // Display mood history in table
+        function displayMoodHistory(moods) {
+            const tableBody = document.getElementById('history-table-body');
+            tableBody.innerHTML = '';
+            
+            moods.forEach(mood => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="border p-3">${mood.date}</td>
+                    <td class="border p-3">${mood.primary_mood}</td>
+                    <td class="border p-3">${mood.specific_mood}</td>
+                    <td class="border p-3">${mood.reason}</td>
+                    <td class="border p-3">${mood.activity}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            document.getElementById('no-history-message').classList.add('hidden');
+        }
+        
+        // Select primary mood
+        function selectMood(mood) {
+            userData.primaryMood = mood;
+            const optionsContainer = document.getElementById('specific-mood-options');
+            optionsContainer.innerHTML = specificMoods[mood].map(specificMood => `
+                <button onclick="selectSpecificMood('${specificMood}')" 
+                        class="mood-btn p-4 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl hover:shadow-xl transition-all flex flex-col items-center">
+                    ${specificMood}
+                </button>
+            `).join('');
+            
+            // Show progress indication
+            showToast('تم اختيار المزاج الأساسي', 'success');
+            
+            // Show next section with animation
+            showSectionWithEffect('specific-mood-section');
+        }
+
+        // Select specific mood
+        function selectSpecificMood(mood) {
+            userData.specificMood = mood;
+            showSection('reason-section');
+        }
+
+        // Select reason
+        function selectReason(reason) {
+            userData.reason = reason;
+            showSectionWithEffect('activity-section');
+            showToast('تم اختيار السبب بنجاح', 'success');
+        }
+
+        // Select activity
+        function selectActivity(activity) {
+            userData.activity = activity;
+            
+            // Call the saveMoodRecord function instead of showSuggestions
+            saveMoodRecord();
+        }
+
+        // Save mood record
+        function saveMoodRecord() {
+            // Show loading state
+            const submitButton = document.querySelector('#activity-section button.primary-action');
+            const originalText = submitButton.textContent;
+            submitButton.innerHTML = '<span class="loading-indicator"></span> جاري الحفظ...';
+            submitButton.disabled = true;
+            
+            // Prepare data
+            const formData = new FormData();
+            formData.append('primary_mood', userData.primaryMood);
+            formData.append('specific_mood', userData.specificMood);
+            formData.append('reason', userData.reason);
+            formData.append('activity', userData.activity);
+            
+            // Send to server
+            fetch('save_mood.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Reset button
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+                
+                if (data.success) {
+                    // Show success message
+                    showToast('تم حفظ سجل المشاعر بنجاح', 'success');
+                    
+                    // Reset user mood data
+                    userData.primaryMood = '';
+                    userData.specificMood = '';
+                    userData.reason = '';
+                    userData.activity = '';
+                    
+                    // Navigate to home
+                    setTimeout(() => {
+                        document.getElementById('home-btn').click();
+                    }, 1000);
+                } else {
+                    // Show error message
+                    showToast('حدث خطأ أثناء حفظ البيانات', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving mood record:', error);
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+                showToast('حدث خطأ في الاتصال بالخادم', 'error');
+            });
+        }
+
+        // Add focus and blur event listeners to all inputs
+        document.querySelectorAll('input').forEach(input => {
+          input.addEventListener('focus', function() {
+            // Remove error styling when user focuses on input
+            this.classList.remove('input-error');
+            const errorId = this.id + '-error';
+            const errorElement = document.getElementById(errorId);
+            if (errorElement) {
+              errorElement.style.display = 'none';
+            }
+          });
+        });
+
+        // Toggle between login and registration forms
+        document.getElementById('show-register').addEventListener('click', function(e) {
+          e.preventDefault();
+          document.getElementById('login-form').style.display = 'none';
+          document.getElementById('register-form').style.display = 'block';
+        });
+
+        document.getElementById('show-login').addEventListener('click', function(e) {
+          e.preventDefault();
+          document.getElementById('login-form').style.display = 'block';
+          document.getElementById('register-form').style.display = 'none';
+        });
+
+        // Check session when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOMContentLoaded fired - checking session");
+            checkSession(); // Call checkSession when page loads
+        });
+    </script>
+    <script src="navbar_updates.js"></script>
+</body>
+</html> 

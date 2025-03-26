@@ -1,0 +1,2 @@
+id,username,name,password,email,google_id,is_admin,created_at,description
+1,admin,المدير,$2y$10$dIeDDV4QB6OZX3X6L4iMsOjGAp8y5LIa4VZKjBTsIM0uFgv/yJ0Ni,admin@example.com,,1,"2025-03-26 17:55:46",
