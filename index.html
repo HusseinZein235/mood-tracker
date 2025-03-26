@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>السعادة النفسية - تتبع مشاعرك</title>
+    <title>moodtracker - تتبع مشاعرك</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Arabic font -->
@@ -202,7 +202,7 @@
     <!-- Navigation Bar -->
     <nav id="navbar" class="navbar bg-white shadow-md py-3 px-4 md:px-8 hidden">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-blue-600">السعادة النفسية</a>
+            <a href="#" class="text-2xl font-bold text-blue-600">moodtracker</a>
             <div class="space-x-1 space-x-reverse">
                 <button id="home-btn" class="px-4 py-2 rounded hover:bg-blue-100 transition-colors">الرئيسية</button>
                 <button id="mood-record-btn" class="px-4 py-2 rounded hover:bg-blue-100 transition-colors">تسجيل مشاعر</button>
@@ -222,7 +222,7 @@
         <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full mx-4">
             <div class="text-center mb-6">
                 <i class="fas fa-brain text-5xl text-blue-600 mb-4"></i>
-                <h1 class="text-3xl font-bold text-blue-600 mb-2">السعادة النفسية</h1>
+                <h1 class="text-3xl font-bold text-blue-600 mb-2">moodtracker</h1>
                 <p class="text-gray-600">
                     مرحبًا بك في رحلة اكتشاف المشاعر والصحة النفسية
                 </p>
@@ -512,7 +512,7 @@
                     </div>
                 </div>
                 <div class="flex items-center">
-                    <input type="text" id="chat-input" placeholder="اكتب رسالتك هنا..." class="flex-1 border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" id="chat-input" placeholder="اكتب رسالتك هنا..." class="flex-1 border border-gray-300 rounded-r-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <button id="send-chat-btn" class="bg-blue-600 text-white p-2 rounded-lg mr-2 hover:bg-blue-700 transition-colors">
                         <i class="fas fa-paper-plane"></i>
                     </button>
@@ -700,7 +700,7 @@
                     <p class="text-lg mb-4">تمرين التنفس 4-7-8 لتخفيف التوتر والقلق</p>
                     <button id="start-breathing-btn" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                         ابدأ التمرين
-                    </button>
+            </button>
                 </div>
                 <div class="bg-blue-50 p-4 rounded-lg">
                     <h3 class="font-semibold mb-2">تعليمات التمرين:</h3>
@@ -1087,7 +1087,7 @@
             },
             body: registerData
           })
-          .then(response => {
+                .then(response => {
             console.log('Registration response status:', response.status);
             return response.json();
           })
@@ -1872,7 +1872,7 @@
                 response = 'أهلاً بك! كيف يمكنني مساعدتك اليوم؟ أنا هنا للاستماع والمساعدة في تحسين حالتك النفسية.';
             }
             else if (message.includes('من أنت') || message.includes('ما اسمك')) {
-                response = 'أنا مساعدك الرقمي في تطبيق السعادة النفسية. أنا هنا لمساعدتك في التعبير عن مشاعرك وتقديم نصائح لتحسين حالتك النفسية.';
+                response = 'أنا مساعدك الرقمي في تطبيق moodtracker. أنا هنا لمساعدتك في التعبير عن مشاعرك وتقديم نصائح لتحسين حالتك النفسية.';
             }
             else if (message.includes('كيف حالك') || message.includes('كيف الحال')) {
                 response = 'أنا بخير، شكراً لسؤالك! الأهم هو كيف حالك أنت اليوم؟ أخبرني عن مشاعرك أو أي شيء تفكر فيه.';
@@ -2259,4 +2259,4 @@
     </script>
     <script src="navbar_updates.js"></script>
 </body>
-</html> 
+</html>

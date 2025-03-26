@@ -19,7 +19,7 @@ $moodRecords = get_mood_records($userId);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إحصائيات المشاعر - السعادة النفسية</title>
+    <title>إحصائيات المشاعر - moodtracker</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
@@ -36,7 +36,7 @@ $moodRecords = get_mood_records($userId);
     <!-- Navigation Bar -->
     <nav class="bg-white shadow-md py-3 px-4 md:px-8">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="index.html" class="text-2xl font-bold text-blue-600">السعادة النفسية</a>
+            <a href="index.html" class="text-2xl font-bold text-blue-600">moodtracker</a>
             
             <div class="hidden md:flex space-x-4 space-x-reverse">
                 <a href="index.html" class="px-3 py-2 rounded hover:bg-blue-100 transition">الرئيسية</a>

@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create enhanced navbar HTML
         const navbarHTML = `
             <div class="flex justify-between items-center w-full">
-                <a href="#" class="text-2xl font-bold text-blue-600">السعادة النفسية</a>
+                <a href="#" class="text-2xl font-bold text-blue-600">moodtracker</a>
                 
                 <div class="hidden md:flex space-x-1 space-x-reverse">
                     <div class="relative group">

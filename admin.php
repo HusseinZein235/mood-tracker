@@ -99,7 +99,7 @@ $moodStats = getMoodStats($pdo);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم الإدارة - السعادة النفسية</title>
+    <title>لوحة تحكم الإدارة - moodtracker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -169,7 +169,7 @@ $moodStats = getMoodStats($pdo);
         <div class="container">
             <span class="navbar-brand">
                 <i class="bi bi-emoji-smile-fill me-2"></i>
-                لوحة تحكم السعادة النفسية
+                لوحة تحكم moodtracker
             </span>
             <div class="d-flex">
                 <form action="auth.php" method="post">
@@ -421,8 +421,8 @@ $moodStats = getMoodStats($pdo);
     
     <footer class="mt-5 py-3 text-center text-muted">
         <div class="container">
-            <p>جميع الحقوق محفوظة &copy; <?php echo date('Y'); ?> - تطبيق السعادة النفسية</p>
+            <p>جميع الحقوق محفوظة &copy; <?php echo date('Y'); ?> - تطبيق moodtracker</p>
         </div>
     </footer>
 </body>
-</html> 
+</html>
