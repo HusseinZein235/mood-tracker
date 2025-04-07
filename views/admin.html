@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة المدير - تتبع المزاج</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="card admin-card">
+            <div class="card-header">
+                <h1><i class="fas fa-chart-bar"></i> لوحة المدير</h1>
+                <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-right"></i> العودة للوحة الرئيسية</a>
+            </div>
+            <div class="card-body">
+                <div class="admin-intro">
+                    <h2>مرحباً بك في لوحة المدير</h2>
+                    <p>هنا يمكنك رؤية إحصائيات المستخدمين وتحليل بيانات المزاج.</p>
+                </div>
+                
+                <div class="stats-overview">
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h3 id="totalUsers">0</h3>
+                            <p>إجمالي المستخدمين</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-smile"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h3 id="totalMoods">0</h3>
+                            <p>إجمالي سجلات المزاج</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h3 id="avgMoodsPerUser">0</h3>
+                            <p>متوسط السجلات لكل مستخدم</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="admin-charts">
+                    <div class="chart-container">
+                        <h3>توزيع المزاج</h3>
+                        <canvas id="moodDistributionChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3>أسباب المزاج</h3>
+                        <canvas id="moodCausesChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="admin-users">
+                    <div class="users-header">
+                        <h3>المستخدمون</h3>
+                        <input type="text" id="userSearchInput" placeholder="البحث عن مستخدم...">
+                    </div>
+                    
+                    <div class="users-table-container">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>اسم المستخدم</th>
+                                    <th>الاسم</th>
+                                    <th>عدد السجلات</th>
+                                    <th>آخر تسجيل</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Users will be added here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="user-details" id="userDetails">
+                    <div class="user-details-header">
+                        <h3 id="selectedUserName">تفاصيل المستخدم</h3>
+                        <button id="closeUserDetailsBtn" class="btn btn-secondary"><i class="fas fa-times"></i></button>
+                    </div>
+                    
+                    <div class="user-info">
+                        <p><strong>اسم المستخدم:</strong> <span id="detailsUsername"></span></p>
+                        <p><strong>الاسم:</strong> <span id="detailsName"></span></p>
+                        <p><strong>الوصف:</strong> <span id="detailsDescription"></span></p>
+                        <p><strong>عدد السجلات:</strong> <span id="detailsRecordCount"></span></p>
+                    </div>
+                    
+                    <div class="user-mood-chart">
+                        <h4>تطور المزاج</h4>
+                        <canvas id="userMoodProgressChart"></canvas>
+                    </div>
+                    
+                    <div class="user-moods-table-container">
+                        <h4>سجلات المزاج</h4>
+                        <table class="moods-table">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>المزاج العام</th>
+                                    <th>المزاج المحدد</th>
+                                    <th>السبب</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userMoodsTableBody">
+                                <!-- Moods will be added here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert" id="alert"></div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html> 

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - تتبع المزاج</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container dashboard-container">
+        <div class="card dashboard-card">
+            <div class="card-header">
+                <h1><i class="fas fa-smile-beam"></i> تتبع المزاج</h1>
+                <h2 id="welcomeMessage">مرحباً</h2>
+                <p>اختر إحدى الميزات التالية</p>
+            </div>
+            <div class="card-body">
+                <!-- Mood Summary Section -->
+                <div class="mood-summary">
+                    <h3>ملخص المزاج</h3>
+                    <div class="mood-summary-content">
+                        <div class="mood-stats">
+                            <div class="mood-stat-item">
+                                <span class="stat-label">السجلات</span>
+                                <span class="stat-value" id="moodCount">0</span>
+                            </div>
+                            <div class="mood-stat-item">
+                                <span class="stat-label">آخر تسجيل</span>
+                                <span class="stat-value" id="lastMoodDate">-</span>
+                            </div>
+                            <div class="mood-stat-item">
+                                <span class="stat-label">المزاج الحالي</span>
+                                <span class="stat-value" id="currentMood">-</span>
+                            </div>
+                        </div>
+                        <div class="mood-chart-container">
+                            <canvas id="moodChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Moods Table -->
+                <div class="recent-moods">
+                    <h3>آخر السجلات</h3>
+                    <div class="table-responsive">
+                        <table class="mood-table">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>المزاج</th>
+                                    <th>الشعور</th>
+                                    <th>السبب</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentMoodsTable">
+                                <tr class="empty-table">
+                                    <td colspan="4">جاري تحميل البيانات...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="features">
+                    <div class="feature" onclick="navigateTo('todo')">
+                        <div class="feature-icon">
+                            <i class="fas fa-tasks fa-4x"></i>
+                        </div>
+                        <h3>قائمة المهام</h3>
+                        <p>نظم مهامك اليومية</p>
+                    </div>
+                    
+                    <div class="feature" onclick="navigateTo('relax')">
+                        <div class="feature-icon">
+                            <i class="fas fa-cloud fa-4x"></i>
+                        </div>
+                        <h3>الاسترخاء</h3>
+                        <p>نصائح وتمارين للاسترخاء</p>
+                    </div>
+                    
+                    <div class="feature" onclick="navigateTo('pomodoro')">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock fa-4x"></i>
+                        </div>
+                        <h3>بومودورو</h3>
+                        <p>تقنية لإدارة الوقت والتركيز</p>
+                    </div>
+                    
+                    <div class="feature" onclick="navigateTo('breathing')">
+                        <div class="feature-icon">
+                            <i class="fas fa-wind fa-4x"></i>
+                        </div>
+                        <h3>تمارين تنفس</h3>
+                        <p>تمارين للتنفس والاسترخاء</p>
+                    </div>
+                    
+                    <div class="feature" onclick="navigateTo('chat')">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments fa-4x"></i>
+                        </div>
+                        <h3>الدردشة</h3>
+                        <p>تحدث مع مساعدنا الذكي</p>
+                    </div>
+                    
+                    <div class="feature admin-feature" id="adminFeature" onclick="navigateTo('admin')">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar fa-4x"></i>
+                        </div>
+                        <h3>لوحة المدير</h3>
+                        <p>تحليل بيانات المستخدمين</p>
+                    </div>
+                </div>
+                
+                <div class="dashboard-footer">
+                    <button class="btn btn-secondary" onclick="logout()">تسجيل الخروج</button>
+                    <button class="btn btn-primary" onclick="recordNewMood()">تسجيل مزاج جديد</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert" id="alert"></div>
+
+    <script src="/js/dashboard.js"></script>
+</body>
+</html> 

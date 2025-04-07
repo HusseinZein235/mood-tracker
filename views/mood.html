@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل المزاج - تتبع المزاج</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="card mood-card">
+            <div class="card-header">
+                <h1><i class="fas fa-smile-beam"></i> تتبع المزاج</h1>
+                <h2 id="welcomeMessage">مرحباً</h2>
+            </div>
+            <div class="card-body">
+                <div class="mood-step active" id="step1">
+                    <h3>كيف تشعر اليوم؟</h3>
+                    <div class="mood-options">
+                        <div class="mood-option" data-mood="سعيد" onclick="selectMood('سعيد')">
+                            <i class="fas fa-laugh-beam fa-5x"></i>
+                            <p>سعيد</p>
+                        </div>
+                        <div class="mood-option" data-mood="عادي" onclick="selectMood('عادي')">
+                            <i class="fas fa-meh fa-5x"></i>
+                            <p>عادي</p>
+                        </div>
+                        <div class="mood-option" data-mood="حزين" onclick="selectMood('حزين')">
+                            <i class="fas fa-sad-tear fa-5x"></i>
+                            <p>حزين</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mood-step" id="step2">
+                    <h3>ما الشعور الذي تحسه بالتحديد؟</h3>
+                    <div class="specific-feelings" id="specificFeelings">
+                        <!-- Will be filled by JavaScript based on the general mood -->
+                    </div>
+                    <button class="btn btn-secondary" onclick="prevStep()">رجوع</button>
+                </div>
+                
+                <div class="mood-step" id="step3">
+                    <h3>ما هو سبب شعورك؟</h3>
+                    <div class="causes">
+                        <div class="cause-option" data-cause="عائلة" onclick="selectCause('عائلة')">
+                            <i class="fas fa-home fa-3x"></i>
+                            <p>عائلة</p>
+                        </div>
+                        <div class="cause-option" data-cause="أصدقاء" onclick="selectCause('أصدقاء')">
+                            <i class="fas fa-users fa-3x"></i>
+                            <p>أصدقاء</p>
+                        </div>
+                        <div class="cause-option" data-cause="مدرسة/جامعة" onclick="selectCause('مدرسة/جامعة')">
+                            <i class="fas fa-graduation-cap fa-3x"></i>
+                            <p>مدرسة/جامعة</p>
+                        </div>
+                        <div class="cause-option" data-cause="صحة" onclick="selectCause('صحة')">
+                            <i class="fas fa-heartbeat fa-3x"></i>
+                            <p>صحة</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="prevStep()">رجوع</button>
+                </div>
+                
+                <div class="mood-step" id="step4">
+                    <h3>ملخص ما سجلته</h3>
+                    <div class="mood-summary">
+                        <p><strong>الشعور العام:</strong> <span id="summaryMood"></span></p>
+                        <p><strong>الشعور المحدد:</strong> <span id="summaryFeeling"></span></p>
+                        <p><strong>السبب:</strong> <span id="summaryCause"></span></p>
+                    </div>
+                    <div class="mood-actions">
+                        <button class="btn btn-secondary" onclick="prevStep()">رجوع</button>
+                        <button class="btn btn-primary" onclick="saveMood()">حفظ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert" id="alert"></div>
+
+    <script src="/js/mood.js"></script>
+</body>
+</html> 

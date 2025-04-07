@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تمارين التنفس - تتبع المزاج</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="card breathing-card">
+            <div class="card-header">
+                <h1><i class="fas fa-wind"></i> تمارين التنفس</h1>
+                <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-right"></i> العودة للوحة الرئيسية</a>
+            </div>
+            <div class="card-body">
+                <div class="breathing-intro">
+                    <h2>فوائد تمارين التنفس</h2>
+                    <p>تساعد تمارين التنفس على تقليل التوتر والقلق، وتحسين التركيز، والاسترخاء. كما أنها تساعد في تحسين وظائف الجهاز التنفسي وتقوية الرئتين.</p>
+                </div>
+                
+                <div class="breathing-exercise">
+                    <h3>تمرين 4-7-8 للتنفس</h3>
+                    <p>هذا التمرين يساعدك على الاسترخاء والنوم بشكل أفضل:</p>
+                    
+                    <div class="breathing-animation" id="breathingAnimation">
+                        <div class="breathing-circle">
+                            <div class="breathing-indicator">
+                                <div class="breathing-text" id="breathingText">استعد</div>
+                                <div class="breathing-count" id="breathingCount"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="breathing-controls">
+                        <button id="startBreathingBtn" class="btn btn-primary"><i class="fas fa-play"></i> ابدأ التمرين</button>
+                        <button id="stopBreathingBtn" class="btn btn-danger" disabled><i class="fas fa-stop"></i> إيقاف</button>
+                    </div>
+                    
+                    <div class="breathing-instructions">
+                        <h4>تعليمات التمرين:</h4>
+                        <div class="breathing-steps">
+                            <div class="breathing-step">
+                                <div class="step-number">1</div>
+                                <div class="step-text">
+                                    <h5>شهيق</h5>
+                                    <p>خذ نفساً عميقاً من خلال أنفك لمدة 4 ثوانٍ</p>
+                                </div>
+                            </div>
+                            <div class="breathing-step">
+                                <div class="step-number">2</div>
+                                <div class="step-text">
+                                    <h5>احبس النفس</h5>
+                                    <p>احبس نفسك لمدة 7 ثوانٍ</p>
+                                </div>
+                            </div>
+                            <div class="breathing-step">
+                                <div class="step-number">3</div>
+                                <div class="step-text">
+                                    <h5>زفير</h5>
+                                    <p>أخرج النفس ببطء من خلال الفم لمدة 8 ثوانٍ</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="breathing-settings">
+                    <h3>الإعدادات</h3>
+                    <div class="settings-form">
+                        <div class="settings-group">
+                            <label for="breathingCycles">عدد دورات التنفس</label>
+                            <input type="number" id="breathingCycles" min="1" max="10" value="3">
+                        </div>
+                        <div class="settings-group">
+                            <label>نوع التمرين</label>
+                            <select id="breathingType">
+                                <option value="4-7-8">تمرين 4-7-8</option>
+                                <option value="4-4-4">تمرين 4-4-4 (مربع التنفس)</option>
+                                <option value="5-2">تمرين 5-2 (تنفس مهدئ)</option>
+                            </select>
+                        </div>
+                        <button id="saveBreathingSettingsBtn" class="btn btn-primary">حفظ الإعدادات</button>
+                    </div>
+                </div>
+                
+                <div class="breathing-tips">
+                    <h3>نصائح إضافية للتنفس</h3>
+                    <ul>
+                        <li>مارس التمارين في مكان هادئ ومريح</li>
+                        <li>اجلس بوضعية مستقيمة لفتح ممرات التنفس</li>
+                        <li>ركز على تنفسك وأبعد المشتتات</li>
+                        <li>مارس التمارين بانتظام للحصول على أفضل النتائج</li>
+                        <li>حاول ممارسة تمارين التنفس عند الشعور بالقلق أو التوتر</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="breathSound" src="/sounds/breath.mp3"></audio>
+
+    <script src="/js/breathing.js"></script>
+</body>
+</html> 

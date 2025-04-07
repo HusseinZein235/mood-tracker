@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بومودورو - تتبع المزاج</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="card pomodoro-card">
+            <div class="card-header">
+                <h1><i class="fas fa-clock"></i> بومودورو</h1>
+                <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-right"></i> العودة للوحة الرئيسية</a>
+            </div>
+            <div class="card-body">
+                <div class="pomodoro-intro">
+                    <h2>تقنية بومودورو للتركيز وإدارة الوقت</h2>
+                    <p>تقنية بومودورو هي أسلوب لإدارة الوقت يساعدك على التركيز لفترات محددة (عادةً 25 دقيقة) تتبعها استراحات قصيرة (5 دقائق). بعد أربع دورات، خذ استراحة طويلة (15-30 دقيقة).</p>
+                </div>
+                
+                <div class="pomodoro-timer">
+                    <div class="timer-display">
+                        <div class="timer-circle">
+                            <div class="timer-progress" id="timerProgress"></div>
+                            <div class="timer-text">
+                                <span id="timerMinutes">25</span>:<span id="timerSeconds">00</span>
+                            </div>
+                            <div class="timer-mode" id="timerMode">وقت العمل</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timer-sessions">
+                        <div class="session-count">
+                            <span>الدورات:</span>
+                            <div class="session-circles" id="sessionCircles">
+                                <span class="session-circle active"></span>
+                                <span class="session-circle"></span>
+                                <span class="session-circle"></span>
+                                <span class="session-circle"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timer-controls">
+                        <button id="startBtn" class="btn btn-primary"><i class="fas fa-play"></i> ابدأ</button>
+                        <button id="pauseBtn" class="btn btn-secondary" disabled><i class="fas fa-pause"></i> إيقاف مؤقت</button>
+                        <button id="resetBtn" class="btn btn-danger"><i class="fas fa-redo"></i> إعادة</button>
+                    </div>
+                </div>
+                
+                <div class="pomodoro-settings">
+                    <h3>الإعدادات</h3>
+                    <div class="settings-form">
+                        <div class="settings-group">
+                            <label for="workTime">وقت العمل (دقائق)</label>
+                            <input type="number" id="workTime" min="1" max="60" value="25">
+                        </div>
+                        <div class="settings-group">
+                            <label for="shortBreak">استراحة قصيرة (دقائق)</label>
+                            <input type="number" id="shortBreak" min="1" max="30" value="5">
+                        </div>
+                        <div class="settings-group">
+                            <label for="longBreak">استراحة طويلة (دقائق)</label>
+                            <input type="number" id="longBreak" min="5" max="60" value="15">
+                        </div>
+                        <button id="saveSettingsBtn" class="btn btn-primary">حفظ الإعدادات</button>
+                    </div>
+                </div>
+                
+                <div class="pomodoro-tips">
+                    <h3>نصائح للاستخدام الفعال لتقنية بومودورو</h3>
+                    <ul>
+                        <li>حدد المهام التي تريد إنجازها قبل البدء</li>
+                        <li>أزل مصادر التشتيت أثناء فترة العمل</li>
+                        <li>استخدم فترات الاستراحة للتمدد أو الحركة</li>
+                        <li>سجل ما أنجزته في كل دورة</li>
+                        <li>احترم الاستراحات كما تحترم وقت العمل</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notification container -->
+        <div id="notification" class="timer-notification"></div>
+    </div>
+
+    <!-- Timer Audio -->
+    <audio id="alarmSound">
+        <source src="data:audio/mpeg;base64,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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB/+yRkCI/AAABpAAAACAAADSAAAAEAAAGkAAAAIAAANIAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//pUZAUP8AAAaQAAAAgAAA0gAAABAAABpAAAACAAADSAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script src="/js/pomodoro.js"></script>
+</body>
+</html> 

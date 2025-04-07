@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الدردشة - تتبع المزاج</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="card chat-card">
+            <div class="card-header">
+                <h1><i class="fas fa-comments"></i> الدردشة</h1>
+                <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-right"></i> العودة للوحة الرئيسية</a>
+            </div>
+            <div class="card-body">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message bot-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>مرحباً! أنا هنا للمساعدة. كيف يمكنني مساعدتك اليوم؟</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Messages will be added here by JavaScript -->
+                    </div>
+                    
+                    <div class="chat-input">
+                        <input type="text" id="userMessage" placeholder="اكتب رسالتك هنا..." autocomplete="off">
+                        <button id="sendMessageBtn" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="chat-suggestions">
+                    <h3>اقتراحات:</h3>
+                    <div class="suggestion-buttons">
+                        <button class="suggestion-btn" onclick="sendSuggestion('كيف يمكنني تحسين مزاجي؟')">كيف يمكنني تحسين مزاجي؟</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('أشعر بالقلق، ماذا أفعل؟')">أشعر بالقلق، ماذا أفعل؟</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('أريد نصائح للنوم بشكل أفضل')">أريد نصائح للنوم بشكل أفضل</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('كيف أتعامل مع الضغط الدراسي؟')">كيف أتعامل مع الضغط الدراسي؟</button>
+                    </div>
+                </div>
+                
+                <div class="chat-info">
+                    <div class="info-box">
+                        <h4><i class="fas fa-info-circle"></i> معلومات</h4>
+                        <p>المساعد الذكي يستخدم تقنية الذكاء الاصطناعي للإجابة على أسئلتك. يمكنه تقديم نصائح عامة حول الصحة النفسية والاسترخاء، لكنه ليس بديلاً عن استشارة متخصص.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/chat.js"></script>
+</body>
+</html> 
