@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // User data
     let userData = null;
     let moodData = null;
-    const OPENROUTER_API_KEY = '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';
+    const OPENROUTER_API_KEY = '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';
     
     // Initialize chat
     initializeChat();
@@ -88,8 +88,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Clear input
         userMessageEl.value = '';
         
-        // Send to AI and get response
-        sendMessageToAI(message);
+        // Try server-side API first, fallback to client-side
+        tryServerSideChat(message);
     }
     
     // Add bot message to chat
@@ -172,67 +172,135 @@ document.addEventListener('DOMContentLoaded', function() {
         sendMessage();
     };
     
-    // Send message to AI
-    async function sendMessageToAI(message) {
-        // Show typing indicator
+    // Try server-side chat API first
+    async function tryServerSideChat(message) {
         addTypingIndicator();
         
         try {
-            // Prepare context from mood data
-            let contextMessage = '';
+            // Prepare context
+            let context = '';
             if (moodData) {
-                contextMessage = `حالة المزاج الحالية للمستخدم: ${getArabicMood(moodData.generalMood)}, الشعور المحدد: ${moodData.specificFeeling}`;
+                context = `المزاج: ${getArabicMood(moodData.generalMood)}, الشعور: ${moodData.specificFeeling}`;
                 if (moodData.cause) {
-                    contextMessage += `, السبب: ${moodData.cause}`;
+                    context += `, السبب: ${moodData.cause}`;
                 }
             }
             
-            // Prepare API request
-            const systemPrompt = "أنت مساعد مفيد ومتعاطف يتحدث باللغة العربية لمستخدم في تطبيق تتبع المزاج. المستخدم اسمه " + 
-                (userData.name || 'المستخدم') + ". " + 
-                (contextMessage ? "معلومات عن حالة المستخدم المزاجية: " + contextMessage : "") + 
-                " قدم نصائح داعمة وإيجابية، لكن لا تدعي أنك معالج نفسي. حافظ على ردود قصيرة ومفيدة تناسب المحادثة. استجب دائمًا باللغة العربية الفصحى البسيطة.";
-
-            const messages = [
-                { role: "system", content: systemPrompt },
-                { role: "user", content: message }
-            ];
-            
-            console.log('Sending to API with context:', contextMessage);
-            
-            // Call OpenRouter API
-            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            // Send to server API
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-                    'HTTP-Referer': window.location.origin,
-                    'X-Title': 'Mood Tracker Assistant'
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ 
-                    model: 'openai/gpt-4o',
-                    messages: messages,
-                    temperature: 0.7,
-                    max_tokens: 500
+                body: JSON.stringify({
+                    message: message,
+                    context: context
                 })
             });
             
-            // Remove typing indicator
+            removeTypingIndicator();
+            
+            if (response.ok) {
+                const data = await response.json();
+                addBotMessage(data.reply);
+            } else {
+                // Fallback to client-side API if server fails
+                console.log('Server-side API failed, trying client-side...');
+                sendMessageToAI(message);
+            }
+        } catch (error) {
+            console.error('Error with server-side chat:', error);
+            removeTypingIndicator();
+            
+            // Fallback to client-side API
+            sendMessageToAI(message);
+        }
+    }
+    
+    // Send message to AI (client-side fallback)
+    async function sendMessageToAI(message) {
+        addTypingIndicator();
+        
+        console.log('Starting client-side API call to OpenRouter');
+        
+        try {
+            // Create a more detailed system prompt with user's mood data
+            let moodContext = '';
+            if (moodData) {
+                const arabicMood = getArabicMood(moodData.generalMood);
+                moodContext = `الحالة المزاجية الحالية للمستخدم هي: ${arabicMood}، والشعور المحدد هو: ${moodData.specificFeeling}`;
+                if (moodData.cause) {
+                    moodContext += `، والسبب هو: ${moodData.cause}`;
+                }
+                console.log('Including mood context:', moodContext);
+            }
+            
+            // Build system message with user data and mood context
+            const systemContent = `أنت مساعد ذكي ومتعاطف يتحدث باللغة العربية لمستخدم في تطبيق تتبع المزاج. اسم المستخدم هو ${userData.name}. ${moodContext ? moodContext : ''} قدم إجابات داعمة ومفيدة تناسب حالة المستخدم المزاجية. اجعل الإجابات قصيرة وإيجابية.`;
+            
+            const messages = [
+                {
+                    role: "system",
+                    content: systemContent
+                },
+                {
+                    role: "user",
+                    content: message
+                }
+            ];
+            
+            console.log('Sending request to OpenRouter API with mood context');
+            
+            // Simplified API request with minimal parameters - following official docs exactly
+            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": window.location.origin,
+                    "X-Title": "nvidia/llama-3.3-nemotron-super-49b-v1:free"
+                },
+                body: JSON.stringify({
+                    "model": "nvidia/llama-3.3-nemotron-super-49b-v1:free",
+                    "messages": messages
+                })
+            });
+            
+            console.log('Response status:', response.status);
+            
+            const responseText = await response.text();
+            console.log('Raw API response:', responseText);
+            
             removeTypingIndicator();
             
             if (!response.ok) {
-                const errorData = await response.json();
-                console.error('OpenRouter API error:', errorData);
-                throw new Error('فشل في الاتصال بالذكاء الاصطناعي');
+                console.error('OpenRouter API error status:', response.status, response.statusText);
+                console.error('Error details:', responseText);
+                throw new Error(`فشل في الاتصال بالذكاء الاصطناعي (${response.status})`);
             }
             
-            const data = await response.json();
-            
-            if (data.choices && data.choices.length > 0) {
-                const reply = data.choices[0].message.content;
-                addBotMessage(reply);
-            } else {
-                throw new Error('لم يتم استلام رد من AI');
+            try {
+                const data = JSON.parse(responseText);
+                console.log('Parsed API response:', data);
+                
+                if (data.choices && data.choices.length > 0) {
+                    const reply = data.choices[0].message.content;
+                    console.log('Bot reply:', reply);
+                    addBotMessage(reply);
+                    
+                    // Log successful interaction
+                    console.log('Successful chat with mood context:', {
+                        user_message: message,
+                        mood_data: moodData,
+                        response_id: data.id || 'unknown'
+                    });
+                } else {
+                    console.error('No choices in response:', data);
+                    throw new Error('لم يتم استلام رد من AI');
+                }
+            } catch (parseError) {
+                console.error('Error parsing JSON response:', parseError);
+                throw new Error('خطأ في تحليل استجابة AI');
             }
         } catch (error) {
             console.error('Error with AI:', error);

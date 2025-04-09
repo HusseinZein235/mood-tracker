@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 connectDB();
 
 // MongoDB Connection for sessions
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/moodtracker';
+const MONGODB_URI = 'mongodb+srv://husseinomeis2014:hussein123@cluster0.whg4c.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 // Session store setup
 const store = new MongoDBStore({
@@ -30,13 +30,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Session middleware
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'moodtracker-secret-key',
+  secret: 'moodtracker-secret-key',
   resave: false,
   saveUninitialized: true,
   store: store,
   cookie: { 
     maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-    secure: process.env.NODE_ENV === 'production',
+    secure: false,
     httpOnly: true,
     sameSite: 'lax'
   }

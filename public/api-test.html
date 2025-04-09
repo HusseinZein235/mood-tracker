@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار API - Deepseek Moodtracker</title>
+    <style>
+        body {
+            font-family: 'Cairo', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #333;
+            text-align: center;
+        }
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'Cairo', Arial, sans-serif;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #status {
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            min-height: 50px;
+            white-space: pre-wrap;
+            font-family: 'Cairo', Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
+        }
+        #log {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            direction: ltr;
+            text-align: left;
+        }
+        .mood-info {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            border: 1px solid #bce8f1;
+        }
+        .mood-info p {
+            margin: 5px 0;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>اختبار واجهة API لـ Deepseek Moodtracker</h1>
+    
+    <div class="mood-info">
+        <h3>معلومات الحالة المزاجية للاختبار:</h3>
+        <p><strong>الحالة المزاجية:</strong> عادي</p>
+        <p><strong>الشعور المحدد:</strong> متقبل</p>
+        <p><strong>السبب:</strong> مدرسة/جامعة</p>
+        <p><strong>السؤال:</strong> ماذا تنصحني أن أفعل لتحسين مزاجي؟</p>
+    </div>
+    
+    <button id="testButton">اختبار الاتصال بـ API</button>
+    
+    <p id="status">انقر على الزر للبدء</p>
+    
+    <h2>إجابة الذكاء الاصطناعي:</h2>
+    <div id="result">ستظهر الإجابة هنا...</div>
+    
+    <h3>معلومات التشخيص:</h3>
+    <div id="log"></div>
+    
+    <script>
+        // Override console.log to display in log div
+        const originalLog = console.log;
+        const originalError = console.error;
+        const logDiv = document.getElementById('log');
+        
+        console.log = function(...args) {
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg) : arg
+            ).join(' ');
+            logDiv.innerHTML += `<div style="color: black;">${message}</div>`;
+            originalLog.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg) : arg
+            ).join(' ');
+            logDiv.innerHTML += `<div style="color: red;">${message}</div>`;
+            originalError.apply(console, args);
+        };
+    </script>
+    
+    <script src="/js/api-test.js"></script>
+</body>
+</html> 
