@@ -1,141 +1,242 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     // Elements
-    const chatMessages = document.querySelector('.chat-messages');
-    const chatForm = document.querySelector('.chat-form');
-    const chatInput = document.querySelector('.chat-input');
-    const sendButton = document.querySelector('.send-button');
-    const loadingIndicator = document.createElement('div');
-    loadingIndicator.className = 'loading-indicator';
-    loadingIndicator.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+    const chatMessagesEl = document.getElementById('chatMessages');
+    const userMessageEl = document.getElementById('userMessage');
+    const sendMessageBtn = document.getElementById('sendMessageBtn');
     
     // User data
     let userData = null;
     let moodData = null;
+    const OPENROUTER_API_KEY = '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';
     
     // Initialize chat
     initializeChat();
     
-    function initializeChat() {
-        // Check authentication
-        fetch('/api/auth/me')
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error('غير مصرح به');
-                }
-                return res.json();
-            })
-            .then(user => {
-                userData = user;
-                // Get latest mood
-                return fetch('/api/mood/latest');
-            })
-            .then(res => {
-                if (!res.ok) {
-                    return null; // User might not have recorded a mood yet
-                }
-                return res.json();
-            })
-            .then(mood => {
-                moodData = mood;
-                // Add welcome message
-                const greeting = getPersonalizedGreeting();
-                addBotMessage(greeting);
-            })
-            .catch(err => {
-                console.error('Error initializing chat:', err);
-                window.location.href = '/login.html';
-            });
+    // Event Listeners
+    userMessageEl.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+    
+    sendMessageBtn.addEventListener('click', sendMessage);
+    
+    // Initialize chat
+    async function initializeChat() {
+        try {
+            // Check authentication
+            const userResponse = await fetch('/api/auth/me');
+            if (!userResponse.ok) {
+                throw new Error('غير مصرح به');
+            }
+            
+            userData = await userResponse.json();
+            console.log('User data loaded:', userData);
+            
+            // Get latest mood
+            const moodResponse = await fetch('/api/mood/latest');
+            if (moodResponse.ok) {
+                moodData = await moodResponse.json();
+                console.log('Latest mood data:', moodData);
+            } else {
+                console.log('No mood data available');
+            }
+            
+            // Add personalized greeting
+            const greeting = getPersonalizedGreeting();
+            addBotMessage(greeting);
+        } catch (error) {
+            console.error('Error initializing chat:', error);
+            
+            // Redirect to login if not authenticated
+            window.location.href = '/login';
+        }
     }
     
+    // Get personalized greeting based on user mood
     function getPersonalizedGreeting() {
         const username = userData.name;
         
         if (!moodData) {
             return `مرحباً ${username}! كيف يمكنني مساعدتك اليوم؟`;
         }
-
+        
         const mood = moodData.generalMood;
         const feeling = moodData.specificFeeling;
         
-        if (mood === 'happy') {
-            return `مرحباً ${username}! أنا سعيد لرؤيتك سعيداً اليوم. كيف يمكنني جعل يومك أفضل؟`;
-        } else if (mood === 'sad') {
-            return `مرحباً ${username}. أنا آسف لسماع أنك تشعر بالحزن. هل هناك شيء يمكنني فعله لمساعدتك؟`;
-        } else {
-            return `مرحباً ${username}! كيف يمكنني مساعدتك اليوم؟`;
+        switch (mood) {
+            case 'happy':
+                return `مرحباً ${username}! أرى أنك تشعر بـ${feeling}. ما الذي يجعل يومك جيدًا؟`;
+            case 'neutral':
+            case 'عادي':
+                return `مرحباً ${username}! يبدو أنك تشعر بـ${feeling}. هل هناك شيء معين تريد التحدث عنه؟`;
+            case 'sad':
+                return `مرحباً ${username}. أرى أنك تشعر بـ${feeling}. أنا هنا للاستماع إليك إذا أردت التحدث عن ذلك.`;
+            default:
+                return `مرحباً ${username}! كيف يمكنني مساعدتك اليوم؟`;
         }
     }
     
+    // Send message function
+    function sendMessage() {
+        const message = userMessageEl.value.trim();
+        if (!message) return;
+        
+        // Add user message to chat
+        addUserMessage(message);
+        
+        // Clear input
+        userMessageEl.value = '';
+        
+        // Send to AI and get response
+        sendMessageToAI(message);
+    }
+    
+    // Add bot message to chat
     function addBotMessage(message) {
-        const messageElement = document.createElement('div');
-        messageElement.className = 'message bot-message';
-        messageElement.textContent = message;
-        chatMessages.appendChild(messageElement);
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message bot-message';
+        
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'message-avatar';
+        avatarDiv.innerHTML = '<i class="fas fa-robot"></i>';
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.innerHTML = `<p>${message}</p>`;
+        
+        messageDiv.appendChild(avatarDiv);
+        messageDiv.appendChild(contentDiv);
+        
+        chatMessagesEl.appendChild(messageDiv);
         scrollToBottom();
     }
     
+    // Add user message to chat
     function addUserMessage(message) {
-        const messageElement = document.createElement('div');
-        messageElement.className = 'message user-message';
-        messageElement.textContent = message;
-        chatMessages.appendChild(messageElement);
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message user-message';
+        
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'message-avatar';
+        avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.innerHTML = `<p>${message}</p>`;
+        
+        messageDiv.appendChild(avatarDiv);
+        messageDiv.appendChild(contentDiv);
+        
+        chatMessagesEl.appendChild(messageDiv);
         scrollToBottom();
     }
     
-    function scrollToBottom() {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-    
-    function showLoadingIndicator() {
-        chatMessages.appendChild(loadingIndicator);
+    // Add typing indicator
+    function addTypingIndicator() {
+        const indicatorDiv = document.createElement('div');
+        indicatorDiv.className = 'message bot-message typing-indicator';
+        
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'message-avatar';
+        avatarDiv.innerHTML = '<i class="fas fa-robot"></i>';
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+        
+        indicatorDiv.appendChild(avatarDiv);
+        indicatorDiv.appendChild(contentDiv);
+        
+        indicatorDiv.id = 'typingIndicator';
+        chatMessagesEl.appendChild(indicatorDiv);
         scrollToBottom();
     }
     
-    function hideLoadingIndicator() {
-        if (loadingIndicator.parentNode === chatMessages) {
-            chatMessages.removeChild(loadingIndicator);
+    // Remove typing indicator
+    function removeTypingIndicator() {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) {
+            indicator.remove();
         }
     }
     
+    // Scroll chat to bottom
+    function scrollToBottom() {
+        chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    }
+    
+    // Send suggestion function (called from HTML)
+    window.sendSuggestion = function(suggestion) {
+        userMessageEl.value = suggestion;
+        sendMessage();
+    };
+    
+    // Send message to AI
     async function sendMessageToAI(message) {
-        showLoadingIndicator();
+        // Show typing indicator
+        addTypingIndicator();
         
         try {
-            // Add mood context if available
+            // Prepare context from mood data
             let contextMessage = '';
             if (moodData) {
-                contextMessage = `User's current mood: ${moodData.generalMood}, feeling: ${moodData.specificFeeling}`;
+                contextMessage = `حالة المزاج الحالية للمستخدم: ${getArabicMood(moodData.generalMood)}, الشعور المحدد: ${moodData.specificFeeling}`;
                 if (moodData.cause) {
-                    contextMessage += `, cause: ${moodData.cause}`;
+                    contextMessage += `, السبب: ${moodData.cause}`;
                 }
             }
             
-            const response = await fetch('/api/chat', {
+            // Prepare API request
+            const systemPrompt = "أنت مساعد مفيد ومتعاطف يتحدث باللغة العربية لمستخدم في تطبيق تتبع المزاج. المستخدم اسمه " + 
+                (userData.name || 'المستخدم') + ". " + 
+                (contextMessage ? "معلومات عن حالة المستخدم المزاجية: " + contextMessage : "") + 
+                " قدم نصائح داعمة وإيجابية، لكن لا تدعي أنك معالج نفسي. حافظ على ردود قصيرة ومفيدة تناسب المحادثة. استجب دائمًا باللغة العربية الفصحى البسيطة.";
+
+            const messages = [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: message }
+            ];
+            
+            console.log('Sending to API with context:', contextMessage);
+            
+            // Call OpenRouter API
+            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                    'HTTP-Referer': window.location.origin,
+                    'X-Title': 'Mood Tracker Assistant'
                 },
                 body: JSON.stringify({ 
-                    message: message,
-                    context: contextMessage
+                    model: 'openai/gpt-4o',
+                    messages: messages,
+                    temperature: 0.7,
+                    max_tokens: 500
                 })
             });
             
+            // Remove typing indicator
+            removeTypingIndicator();
+            
             if (!response.ok) {
+                const errorData = await response.json();
+                console.error('OpenRouter API error:', errorData);
                 throw new Error('فشل في الاتصال بالذكاء الاصطناعي');
             }
             
             const data = await response.json();
-            hideLoadingIndicator();
             
-            if (data.reply) {
-                addBotMessage(data.reply);
+            if (data.choices && data.choices.length > 0) {
+                const reply = data.choices[0].message.content;
+                addBotMessage(reply);
             } else {
-                throw new Error('لم يتم استلام رد');
+                throw new Error('لم يتم استلام رد من AI');
             }
         } catch (error) {
-            console.error('AI Response Error:', error);
-            hideLoadingIndicator();
+            console.error('Error with AI:', error);
+            removeTypingIndicator();
             
             // Fallback to static responses if AI fails
             const staticResponse = getStaticBotResponse(message);
@@ -143,6 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
+    // Get static bot response as fallback
     function getStaticBotResponse(message) {
         message = message.toLowerCase();
         
@@ -165,23 +267,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
-    // Event Listeners
-    chatForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const message = chatInput.value.trim();
-        if (message) {
-            addUserMessage(message);
-            chatInput.value = '';
-            sendMessageToAI(message);
+    // Helper function to get Arabic mood name
+    function getArabicMood(mood) {
+        switch(mood) {
+            case 'happy': return 'سعيد';
+            case 'neutral': return 'محايد';
+            case 'sad': return 'حزين';
+            default: return mood;
         }
-    });
-
-    sendButton.addEventListener('click', function () {
-        const message = chatInput.value.trim();
-        if (message) {
-            addUserMessage(message);
-            chatInput.value = '';
-            sendMessageToAI(message);
-        }
-    });
+    }
 }); 
