@@ -6,7 +6,7 @@ const { isAuth } = require('../middleware/auth');
 // Register User
 router.post('/register', async (req, res) => {
   try {
-    const { username, name, description, password } = req.body;
+    const { username, name, description, password, email } = req.body;
 
     // Validation
     if (!username || !name || !password) {
@@ -19,12 +19,16 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ msg: 'المستخدم موجود بالفعل' });
     }
 
+    // Auto-generate email if not provided
+    const userEmail = email || `${username}@gmail.com`;
+
     // Create new user
     user = new User({
       username,
       name,
       description: description || '',
-      password
+      password,
+      email: userEmail
     });
 
     await user.save();

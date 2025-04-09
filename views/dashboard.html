@@ -20,51 +20,7 @@
                 <p>اختر إحدى الميزات التالية</p>
             </div>
             <div class="card-body">
-                <!-- Mood Summary Section -->
-                <div class="mood-summary">
-                    <h3>ملخص المزاج</h3>
-                    <div class="mood-summary-content">
-                        <div class="mood-stats">
-                            <div class="mood-stat-item">
-                                <span class="stat-label">السجلات</span>
-                                <span class="stat-value" id="moodCount">0</span>
-                            </div>
-                            <div class="mood-stat-item">
-                                <span class="stat-label">آخر تسجيل</span>
-                                <span class="stat-value" id="lastMoodDate">-</span>
-                            </div>
-                            <div class="mood-stat-item">
-                                <span class="stat-label">المزاج الحالي</span>
-                                <span class="stat-value" id="currentMood">-</span>
-                            </div>
-                        </div>
-                        <div class="mood-chart-container">
-                            <canvas id="moodChart"></canvas>
-                        </div>
-                    </div>
-                </div>
                 
-                <!-- Recent Moods Table -->
-                <div class="recent-moods">
-                    <h3>آخر السجلات</h3>
-                    <div class="table-responsive">
-                        <table class="mood-table">
-                            <thead>
-                                <tr>
-                                    <th>التاريخ</th>
-                                    <th>المزاج</th>
-                                    <th>الشعور</th>
-                                    <th>السبب</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recentMoodsTable">
-                                <tr class="empty-table">
-                                    <td colspan="4">جاري تحميل البيانات...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
                 
                 <div class="features">
                     <div class="feature" onclick="navigateTo('todo')">
@@ -115,7 +71,51 @@
                         <p>تحليل بيانات المستخدمين</p>
                     </div>
                 </div>
+                <!-- Mood Summary Section -->
+                <div class="mood-summary">
+                    <h3>ملخص المزاج</h3>
+                    <div class="mood-summary-content">
+                        <div class="mood-stats">
+                            <div class="mood-stat-item">
+                                <span class="stat-label">السجلات</span>
+                                <span class="stat-value" id="moodCount">0</span>
+                            </div>
+                            <div class="mood-stat-item">
+                                <span class="stat-label">آخر تسجيل</span>
+                                <span class="stat-value" id="lastMoodDate">-</span>
+                            </div>
+                            <div class="mood-stat-item">
+                                <span class="stat-label">المزاج الحالي</span>
+                                <span class="stat-value" id="currentMood">-</span>
+                            </div>
+                        </div>
+                        <div class="mood-chart-container">
+                            <canvas id="moodChart"></canvas>
+                        </div>
+                    </div>
+                </div>
                 
+                <!-- Recent Moods Table -->
+                <div class="recent-moods">
+                    <h3>آخر السجلات</h3>
+                    <div class="table-responsive">
+                        <table class="mood-table">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>المزاج</th>
+                                    <th>الشعور</th>
+                                    <th>السبب</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentMoodsTable">
+                                <tr class="empty-table">
+                                    <td colspan="4">جاري تحميل البيانات...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div class="dashboard-footer">
                     <button class="btn btn-secondary" onclick="logout()">تسجيل الخروج</button>
                     <button class="btn btn-primary" onclick="recordNewMood()">تسجيل مزاج جديد</button>
