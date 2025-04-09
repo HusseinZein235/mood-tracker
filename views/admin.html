@@ -56,15 +56,61 @@
                     </div>
                 </div>
                 
-                <div class="admin-charts">
-                    <div class="chart-container">
+                <!-- Mood Statistics Section -->
+                <div class="mood-statistics">
+                    <div class="mood-stats-card">
                         <h3>توزيع المزاج</h3>
-                        <canvas id="moodDistributionChart"></canvas>
+                        <div class="stats-list" id="moodDistributionStats">
+                            <div class="stat-item">
+                                <div class="stat-label">
+                                    <i class="fas fa-smile" style="color: #4CAF50;"></i>
+                                    <span>سعيد</span>
+                                </div>
+                                <div class="stat-value">0%</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">
+                                    <i class="fas fa-meh" style="color: #FFC107;"></i>
+                                    <span>محايد</span>
+                                </div>
+                                <div class="stat-value">0%</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">
+                                    <i class="fas fa-frown" style="color: #F44336;"></i>
+                                    <span>حزين</span>
+                                </div>
+                                <div class="stat-value">0%</div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="chart-container">
-                        <h3>أسباب المزاج</h3>
-                        <canvas id="moodCausesChart"></canvas>
+                    <div class="mood-stats-card">
+                        <h3>أسباب المزاج (المتوسط)</h3>
+                        <div class="stats-list" id="moodReasonsStats">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mood Evolution Over Time Section -->
+                <div class="mood-evolution-section">
+                    <div class="mood-evolution-card">
+                        <h3>تطور المزاج عبر الزمن</h3>
+                        <div class="chart-container">
+                            <canvas id="moodEvolutionChart"></canvas>
+                        </div>
+                        <div class="chart-filters">
+                            <div class="form-group">
+                                <label for="timeRangeSelect">المدة الزمنية:</label>
+                                <select id="timeRangeSelect" class="chart-filter">
+                                    <option value="7">آخر 7 أيام</option>
+                                    <option value="30" selected>آخر 30 يوم</option>
+                                    <option value="90">آخر 3 أشهر</option>
+                                    <option value="all">الكل</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -95,19 +141,46 @@
                 <div class="user-details" id="userDetails">
                     <div class="user-details-header">
                         <h3 id="selectedUserName">تفاصيل المستخدم</h3>
-                        <button id="closeUserDetailsBtn" class="btn btn-secondary"><i class="fas fa-times"></i></button>
+                        <div class="user-actions">
+                            <button id="deleteUserBtn" class="btn btn-danger"><i class="fas fa-trash"></i> حذف المستخدم</button>
+                            <button id="closeUserDetailsBtn" class="btn btn-secondary"><i class="fas fa-times"></i> إغلاق</button>
+                        </div>
                     </div>
                     
                     <div class="user-info">
                         <p><strong>اسم المستخدم:</strong> <span id="detailsUsername"></span></p>
                         <p><strong>الاسم:</strong> <span id="detailsName"></span></p>
+                        <p><strong>البريد الإلكتروني:</strong> <span id="detailsEmail"></span></p>
                         <p><strong>الوصف:</strong> <span id="detailsDescription"></span></p>
                         <p><strong>عدد السجلات:</strong> <span id="detailsRecordCount"></span></p>
+                        <p><strong>تاريخ التسجيل:</strong> <span id="detailsCreatedAt"></span></p>
                     </div>
                     
-                    <div class="user-mood-chart">
-                        <h4>تطور المزاج</h4>
-                        <canvas id="userMoodProgressChart"></canvas>
+                    <div class="user-mood-stats">
+                        <h4>إحصائيات المزاج</h4>
+                        <div class="user-mood-distribution">
+                            <div class="stat-item">
+                                <div class="stat-label">
+                                    <i class="fas fa-smile" style="color: #4CAF50;"></i>
+                                    <span>سعيد</span>
+                                </div>
+                                <div class="stat-value" id="userHappyPercent">0%</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">
+                                    <i class="fas fa-meh" style="color: #FFC107;"></i>
+                                    <span>محايد</span>
+                                </div>
+                                <div class="stat-value" id="userNeutralPercent">0%</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">
+                                    <i class="fas fa-frown" style="color: #F44336;"></i>
+                                    <span>حزين</span>
+                                </div>
+                                <div class="stat-value" id="userSadPercent">0%</div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="user-moods-table-container">
@@ -127,6 +200,23 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="deleteConfirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>تأكيد الحذف</h3>
+                <button class="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>هل أنت متأكد من أنك تريد حذف هذا المستخدم؟ سيتم حذف جميع بيانات المستخدم بشكل نهائي.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirmDeleteBtn" class="btn btn-danger">حذف</button>
+                <button id="cancelDeleteBtn" class="btn btn-secondary">إلغاء</button>
             </div>
         </div>
     </div>
