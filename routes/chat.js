@@ -4,36 +4,39 @@ const { isAuth } = require('../middleware/auth');
 const axios = require('axios');
 require('dotenv').config();
 
-// OpenAI API key from environment variables
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+// OpenRouter API key from environment variables
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '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';
 
 // Handle chat requests
 router.post('/', isAuth, async (req, res) => {
-  const { message, context } = req.body;
+  const { message } = req.body;
   const userName = req.session.user.name || 'المستخدم';
+  const mood = req.body.mood || null;
 
   if (!message) {
     return res.status(400).json({ error: 'الرسالة مطلوبة' });
   }
 
   try {
-    console.log('Sending message to OpenAI:', message);
-    console.log('Context:', context);
-    
-    if (!OPENAI_API_KEY) {
-      console.log('No OpenAI API key found. Using fallback response.');
-      return res.json({ reply: getStaticResponse(message) });
+    console.log('Sending message to OpenRouter:', message);
+    if (mood) {
+      console.log('User mood context:', mood);
     }
-
+    
+    // Prepare context from mood data
+    let contextMessage = '';
+    if (mood) {
+      contextMessage = `حالة المزاج الحالية للمستخدم: ${getArabicMood(mood.generalMood)}, الشعور المحدد: ${mood.specificFeeling}`;
+      if (mood.cause) {
+        contextMessage += `, السبب: ${mood.cause}`;
+      }
+    }
+    
     // Prepare system message with context about the app and user
-    let systemPrompt = `أنت مساعد للذكاء الاصطناعي باللغة العربية لتطبيق تتبع المزاج. 
-    دورك هو مساعدة المستخدم في تحسين حالته المزاجية وتقديم الدعم والنصائح. 
-    يجب أن تكون إجاباتك دائمًا باللغة العربية وأن تكون لطيفة ومفيدة وداعمة.`;
-    
-    // Add context if available
-    if (context) {
-      systemPrompt += ` معلومات عن المستخدم: ${context}`;
-    }
+    const systemPrompt = "أنت مساعد مفيد ومتعاطف يتحدث باللغة العربية لمستخدم في تطبيق تتبع المزاج. المستخدم اسمه " + 
+      userName + ". " + 
+      (contextMessage ? "معلومات عن حالة المستخدم المزاجية: " + contextMessage : "") + 
+      " قدم نصائح داعمة وإيجابية، لكن لا تدعي أنك معالج نفسي. حافظ على ردود قصيرة ومفيدة تناسب المحادثة. استجب دائمًا باللغة العربية الفصحى البسيطة.";
 
     const messages = [
       { role: 'system', content: systemPrompt },
@@ -45,11 +48,11 @@ router.post('/', isAuth, async (req, res) => {
       setTimeout(() => reject(new Error('Timeout')), 10000)
     );
 
-    // Make the API request
+    // Make the API request to OpenRouter
     const responsePromise = axios.post(
-      'https://api.openai.com/v1/chat/completions',
+      'https://openrouter.ai/api/v1/chat/completions',
       {
-        model: 'gpt-3.5-turbo',
+        model: 'openai/gpt-4o',
         messages: messages,
         temperature: 0.7,
         max_tokens: 500,
@@ -57,7 +60,9 @@ router.post('/', isAuth, async (req, res) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'HTTP-Referer': process.env.APP_URL || 'https://moodtracker-app.onrender.com',
+          'X-Title': 'Mood Tracker Assistant'
         }
       }
     );
@@ -67,16 +72,16 @@ router.post('/', isAuth, async (req, res) => {
 
     if (response.data && response.data.choices && response.data.choices.length > 0) {
       const botReply = response.data.choices[0].message.content;
-      console.log('Received response from OpenAI');
-      res.json({ reply: botReply });
+      console.log('Received response from OpenRouter');
+      res.json({ response: botReply });
     } else {
       throw new Error('لم يتم استلام رد صحيح من API');
     }
   } catch (error) {
-    console.error('Error with OpenAI API:', error.message);
+    console.error('Error with OpenRouter API:', error.message);
     
     // Send a static fallback response
-    res.json({ reply: getStaticResponse(message) });
+    res.json({ response: getStaticResponse(message) });
   }
 });
 
@@ -100,6 +105,16 @@ function getStaticResponse(message) {
     return 'مرحباً! كيف يمكنني مساعدتك اليوم؟';
   } else {
     return 'أنا آسف، لا يمكنني فهم طلبك تمامًا. هل يمكنك إعادة صياغته بطريقة أخرى؟';
+  }
+}
+
+// Helper function to get Arabic mood name
+function getArabicMood(mood) {
+  switch(mood) {
+    case 'happy': return 'سعيد';
+    case 'neutral': return 'محايد';
+    case 'sad': return 'حزين';
+    default: return mood;
   }
 }
 

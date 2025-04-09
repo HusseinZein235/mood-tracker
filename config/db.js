@@ -1,10 +1,16 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-const MONGODB_URI = 'mongodb+srv://husseinomeis2014:hussein123@cluster0.whg4c.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/moodtracker';
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(MONGODB_URI);
+    const conn = await mongoose.connect(MONGODB_URI, {
+      // These options might not be needed with newer Mongoose versions
+      // but including them ensures compatibility
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`Error: ${error.message}`);
