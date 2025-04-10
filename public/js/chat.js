@@ -7,11 +7,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // User data
     let userData = null;
     let moodData = null;
-    // API key - updated with the new key provided
-    const OPENROUTER_API_KEY = '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';
+    // API key for OpenRouter - updated with new key
+    const OPENROUTER_API_KEY = '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';
     
-    // API Settings - updated with the requested model name
-    const API_MODEL = 'deepseek/deepseek-v3-base:free';
+    // API Settings - using the model from the example
+    const API_MODEL = 'google/gemma-3-1b-it:free'; 
     const USE_LOCAL_FALLBACK = true;
     
     // Initialize chat
@@ -77,47 +77,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // New combined approach for faster fallback
+    // Updated to use OpenRouter API
     async function sendMessageWithFallback(message) {
         addTypingIndicator();
         
-        // Start a timer for fallback
-        const fallbackTimer = setTimeout(() => {
-            // If API hasn't responded in 3 seconds, show fallback
-            console.log('API taking too long, showing fallback response');
-            removeTypingIndicator();
-            
-            // Display fallback message
-            const fallbackResponse = getEnhancedBotResponse(message);
-            addBotMessage(fallbackResponse);
-        }, 3000);
-        
         try {
-            // Check if API key is available
-            if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY.trim() === '') {
-                console.error('No OpenRouter API key found');
+            // Check API key
+            if (!OPENROUTER_API_KEY) {
                 throw new Error('No API key');
             }
             
-            // Prepare system message and user message
-            const systemMessage = getSystemPrompt();
+            console.log('Sending request to OpenRouter API...');
             
-            // Try the API call - updated to match exact structure provided
+            // Make API call using OpenRouter format
             const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
                     "HTTP-Referer": window.location.origin,
-                    "X-Title": "deepseek moodtracker",
+                    "X-Title": "Mood Tracker Chat",
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     "model": API_MODEL,
                     "messages": [
-                        {
-                            "role": "system",
-                            "content": systemMessage
-                        },
                         {
                             "role": "user",
                             "content": message
@@ -126,19 +109,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             });
             
-            // Clear the fallback timer
-            clearTimeout(fallbackTimer);
-            
             // Process response
             const responseText = await response.text();
             removeTypingIndicator();
             
+            console.log('API response status:', response.status);
+            console.log('Full API response:', responseText);
+            
             if (!response.ok) {
-                console.error('API error:', response.status);
-                throw new Error('API error');
+                console.error('API error:', response.status, response.statusText);
+                // Parse error response if possible
+                try {
+                    const errorData = JSON.parse(responseText);
+                    console.error('Detailed error:', errorData);
+                    if (errorData.error && errorData.error.message) {
+                        throw new Error(`API error: ${errorData.error.message}`);
+                    }
+                } catch (e) {
+                    // If can't parse JSON or no detailed message
+                    throw new Error(`API error: ${response.status}`);
+                }
             }
             
-            const data = JSON.parse(responseText);
+            let data;
+            try {
+                data = JSON.parse(responseText);
+                console.log('Response parsed successfully:', data);
+            } catch (e) {
+                console.error('Failed to parse JSON response:', e);
+                throw new Error('Invalid JSON response');
+            }
+            
+            if (data.error) {
+                console.error('API returned error:', data.error);
+                throw new Error(data.error.message || 'API returned an error');
+            }
+            
             if (data.choices && data.choices.length > 0) {
                 let reply = data.choices[0].message.content;
                 
@@ -146,44 +152,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 reply = cleanupResponse(reply);
                 addBotMessage(reply);
             } else {
-                throw new Error('No response from API');
+                console.error('No choices in API response:', data);
+                throw new Error('No response data from API');
             }
         } catch (error) {
-            // Clear the fallback timer if still running
-            clearTimeout(fallbackTimer);
-            
             console.error('Error with OpenRouter API:', error);
             removeTypingIndicator();
             
-            // Get context for better logged messages
-            let context = '';
-            if (moodData) {
-                context = `المزاج: ${getArabicMood(moodData.generalMood)}, الشعور: ${moodData.specificFeeling}`;
-                if (moodData.cause) {
-                    context += `, السبب: ${moodData.cause}`;
-                }
-            }
-            console.log('Context:', context);
-            console.log('No OpenRouter API connection. Using fallback response.');
-            
-            // Use enhanced fallback responses
-            const fallbackResponse = getEnhancedBotResponse(message);
-            addBotMessage(fallbackResponse);
+            // Show more specific error message
+            const errorMessage = error.message || 'حدث خطأ غير معروف';
+            addBotMessage(`عذراً، حدث خطأ في الاتصال: ${errorMessage}. يرجى المحاولة مرة أخرى لاحقاً.`);
         }
-    }
-    
-    // Get system prompt based on user data
-    function getSystemPrompt() {
-        let moodContext = '';
-        if (moodData) {
-            const arabicMood = getArabicMood(moodData.generalMood);
-            moodContext = `الحالة المزاجية الحالية للمستخدم: ${arabicMood} والشعور: ${moodData.specificFeeling}`;
-            if (moodData.cause) {
-                moodContext += ` والسبب: ${moodData.cause}`;
-            }
-        }
-        
-        return `أنت مساعد ودود جدا باللغة العربية في تطبيق تتبع المزاج. اسم المستخدم ${userData?.name || 'المستخدم'}. ${moodContext} قدم إجابات بسيطة وقصيرة تناسب حالة المستخدم. تجنب الرموز والترقيم قدر الإمكان. الإجابة قصيرة ومباشرة.`;
     }
     
     // Clean up API response
@@ -191,8 +170,12 @@ document.addEventListener('DOMContentLoaded', function() {
         return text.replace(/\*+/g, '')
                   .replace(/\n+/g, ' ')
                   .replace(/\s+/g, ' ')
-                  .replace(/[\.,:;!]+(\s|$)/g, '$1')
                   .trim();
+    }
+    
+    // Replace the entire getEnhancedBotResponse function with a simple error function
+    function getEnhancedBotResponse(message) {
+        return 'عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى لاحقاً.';
     }
     
     // Add bot message to chat
@@ -274,118 +257,6 @@ document.addEventListener('DOMContentLoaded', function() {
         userMessageEl.value = suggestion;
         sendMessage();
     };
-    
-    // Enhanced bot response with more comprehensive fallbacks
-    function getEnhancedBotResponse(message) {
-        // Convert to lowercase and remove diacritics for better matching
-        const cleanMessage = message.toLowerCase()
-            .replace(/[\u064B-\u0652]/g, ''); // Remove Arabic diacritics (tashkeel)
-        
-        // Check for keywords in the cleaned message
-        if (containsAny(cleanMessage, ['سعيد', 'فرح', 'سعادة', 'مبسوط', 'فرحان'])) {
-            return 'سعيد لسماع ذلك المشاعر الإيجابية مهمة لصحتنا';
-        } 
-        else if (containsAny(cleanMessage, ['حزين', 'حزن', 'تعيس', 'مكتئب', 'زعلان'])) {
-            return 'أنا آسف لسماع ذلك من المهم التعبير عن مشاعرك';
-        } 
-        else if (containsAny(cleanMessage, ['قلق', 'توتر', 'خوف', 'خائف', 'متوتر'])) {
-            return 'القلق شعور طبيعي حاول التنفس بعمق واتخاذ وقت للاسترخاء';
-        } 
-        else if (containsAny(cleanMessage, ['غاضب', 'غضب', 'عصبي', 'معصب'])) {
-            return 'الغضب مشاعر طبيعية خذ وقتًا للتهدئة';
-        } 
-        else if (containsAny(cleanMessage, ['نوم', 'أرق', 'تعب', 'متعب', 'إجهاد'])) {
-            return 'النوم الجيد مهم للصحة النفسية حاول الحفاظ على روتين نوم منتظم';
-        } 
-        else if (containsAny(cleanMessage, ['شكر', 'شكرا', 'ممنون'])) {
-            return 'العفو أنا هنا للمساعدة';
-        } 
-        else if (containsAny(cleanMessage, ['مرحبا', 'اهلا', 'السلام', 'هاي', 'هلو'])) {
-            return 'مرحباً كيف يمكنني مساعدتك اليوم';
-        }
-        else if (containsAny(cleanMessage, ['كيف', 'حال', 'أخبار'])) {
-            return 'أنا بخير شكرا لسؤالك كيف حالك أنت';
-        }
-        else if (containsAny(cleanMessage, ['مزاج', 'شعور', 'احساس'])) {
-            if (moodData) {
-                const mood = getArabicMood(moodData.generalMood);
-                return `مزاجك الحالي هو ${mood} وشعورك هو ${moodData.specificFeeling}`;
-            } else {
-                return 'يمكنك تسجيل مزاجك ومشاعرك في صفحة المزاج';
-            }
-        }
-        else if (containsAny(cleanMessage, ['نصيحة', 'توصية', 'اقتراح'])) {
-            return getRandomTip();
-        }
-        else if (containsAny(cleanMessage, ['ساعد', 'مساعدة'])) {
-            return 'يمكنني مساعدتك في التحدث عن مشاعرك وتتبع مزاجك وتقديم النصائح';
-        }
-        else if (containsAny(cleanMessage, ['وقت', 'ساعة', 'تاريخ', 'يوم'])) {
-            return getTimeResponse();
-        }
-        else if (containsAny(cleanMessage, ['طقس', 'جو', 'حرارة'])) {
-            return 'عذرا لا يمكنني معرفة حالة الطقس حاليا';
-        }
-        else if (containsAny(cleanMessage, ['تذكير', 'تذكرني', 'ذكرني'])) {
-            return 'يمكنك استخدام قائمة المهام لإضافة تذكير';
-        }
-        else if (containsAny(cleanMessage, ['مهام', 'واجبات', 'قائمة'])) {
-            return 'يمكنك الوصول إلى قائمة المهام من خلال صفحة المهام';
-        }
-        else if (containsAny(cleanMessage, ['تنفس', 'استرخاء', 'تأمل'])) {
-            return 'جرب تمارين التنفس في تطبيقنا للمساعدة في الاسترخاء';
-        }
-        else if (containsAny(cleanMessage, ['بوت', 'روبوت', 'انت من'])) {
-            return 'أنا مساعد رقمي صمم لمساعدتك في تتبع مزاجك والاعتناء بصحتك النفسية';
-        }
-        else if (containsAny(cleanMessage, ['عن', 'تعرف'])) {
-            if (userData) {
-                return `أعرف أن اسمك ${userData.name} وأنا هنا لمساعدتك`;
-            } else {
-                return 'أنا هنا لمساعدتك في تتبع مزاجك ومشاعرك';
-            }
-        }
-        else if (message.length < 5) {
-            return 'هل يمكنك التوضيح أكثر';
-        }
-        else {
-            return 'أفهم ما تقول يمكنني مساعدتك في تتبع مزاجك ومشاعرك';
-        }
-    }
-    
-    // Helper function to check if message contains any of the keywords
-    function containsAny(text, keywords) {
-        return keywords.some(keyword => text.includes(keyword));
-    }
-    
-    // Get random wellness tip
-    function getRandomTip() {
-        const tips = [
-            'حاول ممارسة التأمل لمدة 5 دقائق يوميا',
-            'المشي في الهواء الطلق يساعد على تحسين المزاج',
-            'شرب الماء بكمية كافية يؤثر إيجابيا على الصحة النفسية',
-            'الاستماع إلى الموسيقى المفضلة يمكن أن يحسن مزاجك',
-            'التواصل مع الأصدقاء يساعد في تخفيف التوتر',
-            'النوم الجيد أساسي للصحة النفسية',
-            'كتابة المشاعر تساعد في التعامل معها',
-            'خذ استراحة قصيرة من الشاشات كل ساعة'
-        ];
-        return tips[Math.floor(Math.random() * tips.length)];
-    }
-    
-    // Get time response
-    function getTimeResponse() {
-        const now = new Date();
-        const hours = now.getHours();
-        
-        if (hours < 12) {
-            return 'صباح الخير الوقت الآن صباحا';
-        } else if (hours < 18) {
-            return 'مساء الخير الوقت الآن بعد الظهر';
-        } else {
-            return 'مساء الخير الوقت الآن مساء';
-        }
-    }
     
     // Helper function to get Arabic mood name
     function getArabicMood(mood) {
