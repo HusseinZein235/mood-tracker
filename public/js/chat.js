@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Elements
-    const chatMessages = document.querySelector('.chat-messages');
-    const chatForm = document.querySelector('.chat-form');
-    const chatInput = document.querySelector('.chat-input');
-    const sendButton = document.querySelector('.send-button');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('userMessage');
+    const sendButton = document.getElementById('sendMessageBtn');
     const loadingIndicator = document.createElement('div');
     loadingIndicator.className = 'loading-indicator';
     loadingIndicator.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
@@ -69,15 +68,23 @@ document.addEventListener('DOMContentLoaded', function () {
     function addBotMessage(message) {
         const messageElement = document.createElement('div');
         messageElement.className = 'message bot-message';
-        messageElement.textContent = message;
+        messageElement.innerHTML = `
+            <div class="message-avatar"><i class="fas fa-robot"></i></div>
+            <div class="message-content"><p></p></div>
+        `;
+        messageElement.querySelector('p').textContent = message;
         chatMessages.appendChild(messageElement);
         scrollToBottom();
     }
-    
+
     function addUserMessage(message) {
         const messageElement = document.createElement('div');
         messageElement.className = 'message user-message';
-        messageElement.textContent = message;
+        messageElement.innerHTML = `
+            <div class="message-avatar"><i class="fas fa-user"></i></div>
+            <div class="message-content"><p></p></div>
+        `;
+        messageElement.querySelector('p').textContent = message;
         chatMessages.appendChild(messageElement);
         scrollToBottom();
     }
@@ -165,23 +172,28 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
-    // Event Listeners
-    chatForm.addEventListener('submit', function (e) {
-        e.preventDefault();
+    function handleSend() {
         const message = chatInput.value.trim();
         if (message) {
             addUserMessage(message);
             chatInput.value = '';
             sendMessageToAI(message);
+        }
+    }
+
+    // Event Listeners
+    sendButton.addEventListener('click', handleSend);
+
+    chatInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSend();
         }
     });
 
-    sendButton.addEventListener('click', function () {
-        const message = chatInput.value.trim();
-        if (message) {
-            addUserMessage(message);
-            chatInput.value = '';
-            sendMessageToAI(message);
-        }
-    });
+    // Called by the onclick handlers on the suggestion buttons in chat.html
+    window.sendSuggestion = function (message) {
+        chatInput.value = message;
+        handleSend();
+    };
 }); 
