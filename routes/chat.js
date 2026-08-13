@@ -4,8 +4,8 @@ const { isAuth } = require('../middleware/auth');
 const axios = require('axios');
 require('dotenv').config();
 
-// OpenAI API key from environment variables
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+// OpenRouter API key from environment variables
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
 // Handle chat requests
 router.post('/', isAuth, async (req, res) => {
@@ -20,8 +20,8 @@ router.post('/', isAuth, async (req, res) => {
     console.log('Sending message to OpenAI:', message);
     console.log('Context:', context);
     
-    if (!OPENAI_API_KEY) {
-      console.log('No OpenAI API key found. Using fallback response.');
+    if (!OPENROUTER_API_KEY) {
+      console.log('No OpenRouter API key found. Using fallback response.');
       return res.json({ reply: getStaticResponse(message) });
     }
 
@@ -47,9 +47,9 @@ router.post('/', isAuth, async (req, res) => {
 
     // Make the API request
     const responsePromise = axios.post(
-      'https://api.openai.com/v1/chat/completions',
+      'https://openrouter.ai/api/v1/chat/completions',
       {
-        model: 'gpt-3.5-turbo',
+        model: 'openai/gpt-4o',
         messages: messages,
         temperature: 0.7,
         max_tokens: 500,
@@ -57,7 +57,9 @@ router.post('/', isAuth, async (req, res) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'HTTP-Referer': 'https://mood-tracker.app',
+          'X-Title': 'Mood Tracker'
         }
       }
     );
@@ -73,7 +75,7 @@ router.post('/', isAuth, async (req, res) => {
       throw new Error('لم يتم استلام رد صحيح من API');
     }
   } catch (error) {
-    console.error('Error with OpenAI API:', error.message);
+    console.error('Error with OpenRouter API:', error.message);
     
     // Send a static fallback response
     res.json({ reply: getStaticResponse(message) });
